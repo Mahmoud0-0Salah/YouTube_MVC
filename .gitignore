@@ -27,11 +27,11 @@ bld/
 # =========================
 # NuGet
 # =========================
-packages/
-*.nupkg
-*.snupkg
-# Keep packages.config if used
-!packages.config
+# packages/
+# *.nupkg
+# *.snupkg
+# # Keep packages.config if used
+# !packages.config
 
 # =========================
 # Logs
@@ -104,3 +104,10 @@ artifacts/
 *.cache
 *.tmp
 *.temp
+
+
+# =========================
+# Entity Framework Migrations
+# =========================
+Migrations/
+/src/App/Migrations/
