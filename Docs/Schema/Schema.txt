@@ -1,0 +1,104 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table User {
+  // from IdentityUser
+  user_id varchar(256) [pk] 
+
+  UserName varchar(256)
+  NormalizedUserName varchar(256)
+  Email varchar(256)
+  NormalizedEmail varchar(256)
+  EmailConfirmed bool
+
+  PasswordHash text
+  SecurityStamp text
+  ConcurrencyStamp text
+
+  PhoneNumber varchar(50)
+  PhoneNumberConfirmed bool
+
+  TwoFactorEnabled bool
+
+  LockoutEnd datetime
+  LockoutEnabled bool
+  AccessFailedCount int
+
+  // custom fields
+  first_name varchar(255)
+  last_name varchar(255)
+  image_url varchar(255)
+  gender enum
+  date_of_birth date
+  created_at date
+}
+
+Table Report {
+  report_id varchar(256) [pk]
+  reason varchar(255)
+  description varchar(255)
+  status enum
+}
+
+
+Table Video {
+  video_id varchar(256) [pk]
+  user_id varchar(256) [ref: < User.user_id] 
+  created_at date
+  title varchar(255)
+  description varchar(255)
+  video_url varchar(255)
+  thumbnail_url varchar(255)
+  visable bool
+  duration time
+}
+
+
+Table Comment {
+  comment_id varchar(256) [pk]
+  content varchar(255)
+  updated_at date
+
+}
+
+Table Like_Viedeo{
+  video_id varchar(256) [pk, ref: < Video.video_id]
+  user_id varchar(256) [pk, ref: < User.user_id] 
+  created_at date
+}
+
+Table Watch_Viedeo{
+  video_id varchar(256) [pk, ref: < Video.video_id]
+  user_id varchar(256) [pk, ref: < User.user_id] 
+  watched_at date
+}
+
+Table User_Create_Report{
+  report_id int [pk,ref: < Report.report_id]
+  video_id varchar(256) [ref: < Video.video_id]
+  user_id varchar(256) [ref: < User.user_id] 
+  created_at date
+
+}
+
+Table Review_Report{
+  report_id varchar(256) [pk,ref: < Report.report_id]
+  admin_id varchar(256) [ref: < User.user_id] 
+  reviewed_at date
+}
+
+Table Banned_Users{
+  user_id varchar(256) [ref: < User.user_id] 
+  admin_id varchar(256) [ref: < User.user_id] 
+  banned_at date
+}
+
+
+Table User_Create_Comment{
+  comment_id varchar(256) [pk,ref: < Comment.comment_id]
+  video_id varchar(256) [ref: < Video.video_id]
+  user_id varchar(256) [ref: < User.user_id] 
+  created_at date
+
+}
+
