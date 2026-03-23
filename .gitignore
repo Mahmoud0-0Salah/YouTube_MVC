@@ -1,0 +1,106 @@
+# =========================
+# Build results
+# =========================
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+bld/
+
+# =========================
+# Visual Studio files
+# =========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# =========================
+# Rider / VS Code (optional)
+# =========================
+.idea/
+.vscode/
+
+# =========================
+# NuGet
+# =========================
+packages/
+*.nupkg
+*.snupkg
+# Keep packages.config if used
+!packages.config
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# IIS / ASP.NET
+# =========================
+*.vspscc
+*.vssscc
+*.publishsettings
+
+# =========================
+# Entity Framework
+# =========================
+*.edmx.diagram
+
+# =========================
+# ASP.NET Core
+# =========================
+appsettings.Development.json
+appsettings.*.Development.json
+
+# =========================
+# User secrets
+# =========================
+secrets.json
+
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Test results
+# =========================
+TestResults/
+
+# =========================
+# Coverage reports
+# =========================
+coverage/
+*.coverage
+*.coveragexml
+
+# =========================
+# Publish output
+# =========================
+publish/
+wwwroot/dist/
+
+# =========================
+# Resharper
+# =========================
+_ReSharper*/
+*.DotSettings.user
+
+# =========================
+# Dotnet CLI
+# =========================
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# =========================
+# Others
+# =========================
+*.cache
+*.tmp
+*.temp
