@@ -55,6 +55,7 @@ bld/
 # =========================
 appsettings.Development.json
 appsettings.*.Development.json
+appsettings.json
 
 # =========================
 # User secrets
@@ -83,7 +84,7 @@ coverage/
 # Publish output
 # =========================
 publish/
-wwwroot/dist/
+wwwroot/img/
 
 # =========================
 # Resharper
