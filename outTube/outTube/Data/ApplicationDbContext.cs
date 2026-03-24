@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {
@@ -22,24 +21,24 @@ public class ApplicationDbContext : IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
 
-        // ============ COMPOSITE KEYS ============
+        // ============ UNIQUE INDEXES FOR JUNCTION TABLES ============
 
-        // LikeVideo: unique index (VideoId, UserId)
+        // LikeVideo: (VideoId, UserId) should be unique
         builder.Entity<LikeVideo>()
             .HasIndex(lv => new { lv.VideoId, lv.UserId })
             .IsUnique();
 
-        // WatchVideo: unique index (VideoId, UserId)
+        // WatchVideo: (VideoId, UserId) should be unique
         builder.Entity<WatchVideo>()
             .HasIndex(wv => new { wv.VideoId, wv.UserId })
             .IsUnique();
 
-        // UserSubscriber: unique index (UserId, SubscriberId)
+        // UserSubscriber: (UserId, SubscriberId) should be unique
         builder.Entity<UserSubscriber>()
             .HasIndex(us => new { us.UserId, us.SubscriberId })
             .IsUnique();
 
-        // BannedUser: unique index (UserId, AdminId)
+        // BannedUser: (UserId, AdminId) should be unique
         builder.Entity<BannedUser>()
             .HasIndex(bu => new { bu.UserId, bu.AdminId })
             .IsUnique();
@@ -164,22 +163,5 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .WithMany(u => u.BansIssued)
             .HasForeignKey(bu => bu.AdminId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // ============ INDEXES ============
-
-        builder.Entity<Video>()
-            .HasIndex(v => v.UserId);
-
-        builder.Entity<UserCreateComment>()
-            .HasIndex(uc => uc.VideoId);
-
-        builder.Entity<UserCreateComment>()
-            .HasIndex(uc => uc.UserId);
-
-        builder.Entity<UserCreateReport>()
-            .HasIndex(ur => ur.VideoId);
-
-        builder.Entity<UserCreateReport>()
-            .HasIndex(ur => ur.UserId);
     }
 }

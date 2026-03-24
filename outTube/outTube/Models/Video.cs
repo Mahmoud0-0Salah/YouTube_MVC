@@ -1,4 +1,3 @@
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,6 +7,7 @@ public class Video
     [MaxLength(450)]
     public string VideoId { get; set; } = Guid.NewGuid().ToString();
 
+    [Required]
     [MaxLength(450)]
     public string UserId { get; set; }
 
@@ -32,7 +32,7 @@ public class Video
 
     public TimeSpan Duration { get; set; }
 
-    
+
     public ICollection<LikeVideo> Likes { get; set; } = new List<LikeVideo>();
     public ICollection<WatchVideo> Views { get; set; } = new List<WatchVideo>();
     public ICollection<UserCreateComment> Comments { get; set; } = new List<UserCreateComment>();

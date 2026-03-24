@@ -10,6 +10,7 @@ public class ReviewReport
     [ForeignKey("ReportId")]
     public Report Report { get; set; }
 
+    [Required]
     [MaxLength(450)]
     public string AdminId { get; set; }
 

@@ -10,12 +10,14 @@ public class UserCreateComment
     [ForeignKey("CommentId")]
     public Comment Comment { get; set; }
 
+    [Required]
     [MaxLength(450)]
     public string VideoId { get; set; }
 
     [ForeignKey("VideoId")]
     public Video Video { get; set; }
 
+    [Required]
     [MaxLength(450)]
     public string UserId { get; set; }
 

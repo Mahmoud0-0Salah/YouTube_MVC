@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using outTube.Models.Enums;
 using System.ComponentModel.DataAnnotations;
-
 
 public class User : IdentityUser
 {
@@ -27,13 +26,8 @@ public class User : IdentityUser
     public ICollection<UserCreateComment> Comments { get; set; } = new List<UserCreateComment>();
     public ICollection<UserCreateReport> Reports { get; set; } = new List<UserCreateReport>();
     public ICollection<ReviewReport> ReviewedReports { get; set; } = new List<ReviewReport>();
-
-
     public ICollection<UserSubscriber> Subscribers { get; set; } = new List<UserSubscriber>();
     public ICollection<UserSubscriber> Subscriptions { get; set; } = new List<UserSubscriber>();
-
-  
     public ICollection<BannedUser> BansReceived { get; set; } = new List<BannedUser>();
     public ICollection<BannedUser> BansIssued { get; set; } = new List<BannedUser>();
 }
-

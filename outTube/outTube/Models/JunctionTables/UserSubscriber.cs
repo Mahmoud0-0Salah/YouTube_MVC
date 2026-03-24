@@ -6,12 +6,14 @@ public class UserSubscriber
     [Key]
     public int Id { get; set; }
 
+    [Required]
     [MaxLength(450)]
     public string UserId { get; set; }
 
     [ForeignKey("UserId")]
     public User User { get; set; }
 
+    [Required]
     [MaxLength(450)]
     public string SubscriberId { get; set; }
 

@@ -15,8 +15,7 @@ public class Report
 
     public ReportStatus Status { get; set; } = ReportStatus.Pending;
 
-
+  
     public UserCreateReport UserCreateReport { get; set; }
     public ReviewReport? ReviewReport { get; set; }
 }
-
