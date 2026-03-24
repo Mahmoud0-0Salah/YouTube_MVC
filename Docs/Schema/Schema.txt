@@ -1,6 +1,5 @@
 // Use DBML to define your database structure
 // Docs: https://dbml.dbdiagram.io/docs
-
 Table User {
   // from IdentityUser
   user_id varchar(256) [pk] 
@@ -33,6 +32,8 @@ Table User {
   created_at date
 }
 
+
+
 Table Report {
   report_id varchar(256) [pk]
   reason varchar(255)
@@ -60,6 +61,7 @@ Table Comment {
   updated_at date
 
 }
+
 
 Table Like_Viedeo{
   video_id varchar(256) [pk, ref: < Video.video_id]
@@ -102,3 +104,9 @@ Table User_Create_Comment{
 
 }
 
+
+TABLE User_Subscriber{
+    user_id varchar(256) [pk,ref: < User.user_id] 
+    subscriber_id varchar(256) [pk,ref: < User.user_id]
+    subscribed_at date 
+}
