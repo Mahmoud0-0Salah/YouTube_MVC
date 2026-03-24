@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
@@ -24,21 +24,25 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
         // ============ COMPOSITE KEYS ============
 
-        // LikeVideo: composite key (VideoId, UserId)
+        // LikeVideo: unique index (VideoId, UserId)
         builder.Entity<LikeVideo>()
-            .HasKey(lv => new { lv.VideoId, lv.UserId });
+            .HasIndex(lv => new { lv.VideoId, lv.UserId })
+            .IsUnique();
 
-        // WatchVideo: composite key (VideoId, UserId)
+        // WatchVideo: unique index (VideoId, UserId)
         builder.Entity<WatchVideo>()
-            .HasKey(wv => new { wv.VideoId, wv.UserId });
+            .HasIndex(wv => new { wv.VideoId, wv.UserId })
+            .IsUnique();
 
-        // UserSubscriber: composite key (UserId, SubscriberId)
+        // UserSubscriber: unique index (UserId, SubscriberId)
         builder.Entity<UserSubscriber>()
-            .HasKey(us => new { us.UserId, us.SubscriberId });
+            .HasIndex(us => new { us.UserId, us.SubscriberId })
+            .IsUnique();
 
-        // BannedUser: composite key (UserId, AdminId)
+        // BannedUser: unique index (UserId, AdminId)
         builder.Entity<BannedUser>()
-            .HasKey(bu => new { bu.UserId, bu.AdminId });
+            .HasIndex(bu => new { bu.UserId, bu.AdminId })
+            .IsUnique();
 
         // ============ RELATIONSHIPS ============
 

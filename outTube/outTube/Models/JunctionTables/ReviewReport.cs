@@ -1,16 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class ReviewReport
 {
     [Key]
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string ReportId { get; set; }
 
     [ForeignKey("ReportId")]
     public Report Report { get; set; }
 
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string AdminId { get; set; }
 
     [ForeignKey("AdminId")]

@@ -1,10 +1,10 @@
-﻿using outTube.Models.Enums;
+using outTube.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 public class Report
 {
     [Key]
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string ReportId { get; set; } = Guid.NewGuid().ToString();
 
     [MaxLength(255)]

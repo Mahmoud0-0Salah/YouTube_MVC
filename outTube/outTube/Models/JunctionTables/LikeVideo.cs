@@ -1,15 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class LikeVideo
 {
-    [MaxLength(256)]
+    [Key]
+    public int Id { get; set; }
+
+    [MaxLength(450)]
     public string VideoId { get; set; }
 
     [ForeignKey("VideoId")]
     public Video Video { get; set; }
 
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string UserId { get; set; }
 
     [ForeignKey("UserId")]

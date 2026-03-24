@@ -1,22 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class UserCreateReport
 {
     [Key]
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string ReportId { get; set; }
 
     [ForeignKey("ReportId")]
     public Report Report { get; set; }
 
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string VideoId { get; set; }
 
     [ForeignKey("VideoId")]
     public Video Video { get; set; }
 
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string UserId { get; set; }
 
     [ForeignKey("UserId")]

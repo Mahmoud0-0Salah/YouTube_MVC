@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 public class Comment
 {
     [Key]
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string CommentId { get; set; } = Guid.NewGuid().ToString();
 
     [MaxLength(255)]

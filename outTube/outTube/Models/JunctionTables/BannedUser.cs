@@ -1,15 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class BannedUser
 {
-    [MaxLength(256)]
+    [Key]
+    public int Id { get; set; }
+
+    [MaxLength(450)]
     public string UserId { get; set; }
 
     [ForeignKey("UserId")]
     public User User { get; set; }
 
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string AdminId { get; set; }
 
     [ForeignKey("AdminId")]

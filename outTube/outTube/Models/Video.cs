@@ -1,14 +1,14 @@
-﻿
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 public class Video
 {
     [Key]
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string VideoId { get; set; } = Guid.NewGuid().ToString();
 
-    [MaxLength(256)]
+    [MaxLength(450)]
     public string UserId { get; set; }
 
     [ForeignKey("UserId")]
