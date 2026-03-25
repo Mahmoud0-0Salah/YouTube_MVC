@@ -2,9 +2,7 @@ using outTube.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace outTube.Models.JunctionTables;
-
-public class ReviewReport
+public class ReviewReport : IValidatableObject
 {
     [Key]
     [MaxLength(450)]
@@ -13,7 +11,7 @@ public class ReviewReport
     [ForeignKey("ReportId")]
     public Report Report { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Admin ID is required.")]
     [MaxLength(450)]
     public string AdminId { get; set; }
 
@@ -21,4 +19,14 @@ public class ReviewReport
     public User Admin { get; set; }
 
     public DateTime ReviewedAt { get; set; } = DateTime.UtcNow;
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (ReviewedAt > DateTime.UtcNow.AddMinutes(1))
+        {
+            yield return new ValidationResult(
+                "Review date cannot be in the future.",
+                new[] { nameof(ReviewedAt) });
+        }
+    }
 }
