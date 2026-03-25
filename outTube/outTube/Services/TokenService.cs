@@ -40,8 +40,8 @@ namespace outTube.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(_config["Jwt:ExpiryInMinutes"] ?? "1440")),
                 SigningCredentials = creds,
-                Issuer = _config["Jwt:Issuer"],
-                Audience = _config["Jwt:Audience"]
+                Issuer = _config["Jwt:Issuer"] ?? "ourTube",
+                Audience = _config["Jwt:Audience"] ?? "ourTubeUsers"
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

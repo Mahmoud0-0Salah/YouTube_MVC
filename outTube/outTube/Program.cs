@@ -62,9 +62,9 @@ namespace outTube
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
-                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidIssuer = jwtSettings["Issuer"] ?? "ourTube",
                     ValidateAudience = true,
-                    ValidAudience = jwtSettings["Audience"],
+                    ValidAudience = jwtSettings["Audience"] ?? "ourTubeUsers",
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
