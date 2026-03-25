@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using outTube.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
-public class User : IdentityUser
+namespace outTube.Models
 {
+    public class User : IdentityUser
+    {
     [MaxLength(255)]
     public string FirstName { get; set; }
 
@@ -30,4 +32,5 @@ public class User : IdentityUser
     public ICollection<UserSubscriber> Subscriptions { get; set; } = new List<UserSubscriber>();
     public ICollection<BannedUser> BansReceived { get; set; } = new List<BannedUser>();
     public ICollection<BannedUser> BansIssued { get; set; } = new List<BannedUser>();
+    }
 }
