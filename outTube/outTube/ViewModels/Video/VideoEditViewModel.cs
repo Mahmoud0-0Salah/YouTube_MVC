@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+namespace outTube.ViewModels.Video;
+
+using System.ComponentModel.DataAnnotations;
 
 public class VideoEditViewModel
 {

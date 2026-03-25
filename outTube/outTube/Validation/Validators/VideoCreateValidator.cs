@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
+using outTube.ViewModels.Video;
 
 public class VideoCreateValidator : AbstractValidator<VideoCreateViewModel>
 {
@@ -15,15 +16,15 @@ public class VideoCreateValidator : AbstractValidator<VideoCreateViewModel>
             .Must(NotContainHtml).WithMessage("Description cannot contain HTML tags.")
             .When(x => !string.IsNullOrEmpty(x.Description));
 
-        RuleFor(x => x.VideoFile)
+        RuleFor(x => x.Source)
             .NotNull().WithMessage("Video file is required.")
             .Must(BeAValidVideoFile).WithMessage("Only .mp4, .avi, .mkv, .mov, .webm files are allowed.")
             .Must(BeWithinVideoSizeLimit).WithMessage("Video file cannot exceed 500 MB.");
 
-        RuleFor(x => x.ThumbnailFile)
+        RuleFor(x => x.Thumbnail)
             .Must(BeAValidImageFile).WithMessage("Only .jpg, .jpeg, .png, .webp files are allowed.")
             .Must(BeWithinImageSizeLimit).WithMessage("Thumbnail cannot exceed 5 MB.")
-            .When(x => x.ThumbnailFile != null);
+            .When(x => x.Thumbnail != null);
     }
 
     private bool NotContainHtml(string? value)

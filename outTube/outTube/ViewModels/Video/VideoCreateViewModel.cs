@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+namespace outTube.ViewModels.Video;
+
+using System.ComponentModel.DataAnnotations;
 
 public class VideoCreateViewModel
 {
@@ -17,12 +19,12 @@ public class VideoCreateViewModel
     [AllowedExtensions(new[] { ".mp4", ".avi", ".mkv", ".mov", ".webm" })]
     [MaxFileSize(500)] // 500 MB
     [Display(Name = "Video File")]
-    public IFormFile VideoFile { get; set; }
+    public IFormFile Source { get; set; }
 
     [AllowedExtensions(new[] { ".jpg", ".jpeg", ".png", ".webp" })]
     [MaxFileSize(5)] // 5 MB
     [Display(Name = "Thumbnail")]
-    public IFormFile? ThumbnailFile { get; set; }
+    public IFormFile? Thumbnail { get; set; }
 
     [Display(Name = "Visible")]
     public bool Visible { get; set; } = true;

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+namespace outTube.ViewModels;
+
+using System.ComponentModel.DataAnnotations;
 
 public class UserLoginViewModel
 {

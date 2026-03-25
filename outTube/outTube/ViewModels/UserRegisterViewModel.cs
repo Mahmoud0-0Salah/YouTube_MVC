@@ -1,4 +1,6 @@
-﻿using outTube.Models.Enums;
+namespace outTube.ViewModels;
+
+using outTube.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 public class UserRegisterViewModel
