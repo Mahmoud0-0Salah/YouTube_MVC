@@ -29,3 +29,33 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Flatpickr Modern Customization */
+.flatpickr-calendar.dark {
+    background: #1a1a1a !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+    border-radius: 1rem !important;
+}
+
+.flatpickr-day.selected {
+    background: #ff0000 !important;
+    border-color: #ff0000 !important;
+}
+
+.flatpickr-day:hover {
+    background: rgba(255,0,0,0.2) !important;
+}
+
+.flatpickr-months .flatpickr-month {
+    color: #fff !important;
+}
+
+.flatpickr-weekdays {
+    color: #999 !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background: transparent !important;
+    color: #fff !important;
+}
