@@ -1,8 +1,212 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using ourTube.ViewModels
+@using ourTube.ViewModels.Video
+@model PaginatedList<VideoGetViewModel>
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /* Categories Filter */
+    .categories {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        position: sticky;
+        top: 56px;
+        background-color: var(--bg-color);
+        z-index: 90;
+        overflow-x: auto;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .category-chip {
+        background-color: var(--chip-bg);
+        color: var(--text-color);
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.2s;
+    }
+    .category-chip:hover { background-color: var(--chip-hover); }
+    .category-chip.active { background-color: var(--text-color); color: var(--bg-color); }
+
+    /* Video Grid */
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        row-gap: 40px;
+        margin-top: 24px;
+    }
+
+    /* Video Card */
+    .video-card {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        background: transparent;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .thumbnail-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: var(--border-color); /* placeholder color */
+    }
+    .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.2s ease-in-out;
+    }
+    .video-card:hover .thumbnail {
+        transform: scale(1.02);
+        border-radius: 0;
+    }
+    
+    .duration {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
+        padding: 3px 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .video-info {
+        display: flex;
+        margin-top: 12px;
+        gap: 12px;
+    }
+    .channel-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-top: 2px;
+    }
+    .video-details {
+        display: flex;
+        flex-direction: column;
+    }
+    .video-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+    .channel-name {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 2px;
+        text-decoration: none;
+    }
+    .channel-name:hover {
+        color: var(--text-color);
+    }
+    .video-meta {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    /* Loading Spinner */
+    #loading {
+        text-align: center;
+        padding: 20px;
+        display: none;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 500px) {
+        .video-grid { grid-template-columns: 1fr; }
+        .thumbnail-container { border-radius: 0; }
+    }
+</style>
+
+<!-- Categories Filter -->
+<!-- <div class="categories">
+    <button class="category-chip active">All</button>
+    <button class="category-chip">Music</button>
+    <button class="category-chip">Gaming</button>
+    <button class="category-chip">Live</button>
+    <button class="category-chip">Mixes</button>
+    <button class="category-chip">ASP.NET Core</button>
+    <button class="category-chip">C#</button>
+    <button class="category-chip">UI Design</button>
+    <button class="category-chip">Computer hardware</button>
+    <button class="category-chip">Podcasts</button>
+    <button class="category-chip">Recently uploaded</button>
+    <button class="category-chip">New to you</button>
+</div> -->
+<!-- Video Grid Loop -->
+<div class="video-grid" id="video-grid">
+    <partial name="_VideoCards" model="Model" />
 </div>
+
+<div id="loading">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let page = 1;
+        let loading = false;
+        let hasMore = @(Model.HasNextPage.ToString().ToLower());
+
+        window.onscroll = function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                if (!loading && hasMore) {
+                    loadMoreVideos();
+                }
+            }
+        };
+
+        function loadMoreVideos() {
+            loading = true;
+            document.getElementById("loading").style.display = "block";
+            page++;
+
+            fetch(`/?page=${page}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                if (html.trim() === "") {
+                    hasMore = false;
+                } else {
+                    document.getElementById("video-grid").innerHTML += html;
+                    loading = false;
+                }
+                document.getElementById("loading").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error loading more videos:", error);
+                loading = false;
+                document.getElementById("loading").style.display = "none";
+            });
+        }
+    </script>
+}
+

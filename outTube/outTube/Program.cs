@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ourTube.Repositories;
+using ourTube.Repositories.Interfaces;
+using OurTube.Repositories;
+using OurTube.Repositories.Interfaces.Common;
 using Microsoft.IdentityModel.Tokens;
 using outTube.Data;
 using outTube.Models;
@@ -22,6 +26,9 @@ namespace outTube
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddScoped<IVideoRepo,VideoRepo>();
+
+			var app = builder.Build();
             // Register Services
             builder.Services.AddScoped<ITokenService, TokenService>();
 

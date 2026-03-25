@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using ourTube.Repositories.Interfaces;
+using ourTube.ViewModels;
+using ourTube.ViewModels.Video;
 using outTube.Models;
 using System.Diagnostics;
 
@@ -6,12 +9,26 @@ namespace outTube.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+		private readonly IVideoRepo _videoRepo;
 
-        public IActionResult Privacy()
+		public HomeController(IVideoRepo videoRepo)
+		{
+			_videoRepo = videoRepo;
+		}
+		public IActionResult Index(int page = 1)
+		{
+			var model = _videoRepo.GetVideosInfo(page);
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+			{
+				return PartialView("_VideoCards", model);
+			}
+
+			return View(model);
+		}
+
+
+		public IActionResult Privacy()
         {
             return View();
         }
