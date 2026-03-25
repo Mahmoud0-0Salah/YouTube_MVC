@@ -1,15 +1,13 @@
-﻿using OurTube.Data;
-using OurTube.Models;
-using OurTube.Repositories.Interfaces.Common;
+﻿using OurTube.Repositories.Interfaces.Common;
 using System.Linq.Expressions;
 
 namespace OurTube.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly OurTubeContext context;
+        private readonly ApplicationDbContext context;
 
-        public Repository(OurTubeContext context)
+        public Repository(ApplicationDbContext context)
         {
             this.context = context;
         }
