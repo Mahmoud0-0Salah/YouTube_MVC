@@ -54,7 +54,11 @@ namespace outTube.Controllers
 
                 if (model.ImageFile != null)
                 {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "profiles");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ImageFile.FileName);
                     var filePath = Path.Combine(uploadsFolder, fileName);
 
@@ -63,7 +67,7 @@ namespace outTube.Controllers
                         await model.ImageFile.CopyToAsync(fileStream);
                     }
 
-                    user.ImageUrl = "/uploads/profiles/" + fileName;
+                    user.ImageUrl = "/images/profiles/" + fileName;
                 }
 
                 var result = await _userManager.UpdateAsync(user);

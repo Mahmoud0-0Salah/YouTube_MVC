@@ -7,8 +7,13 @@
     <div class="profile-card">
         <div class="profile-header">
             <div class="profile-image-section">
-                <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://ui-avatars.com/api/?name=" + Model.UserName + "&background=random" : Model.ImageUrl)" 
-                     alt="Profile Picture" id="profile-img-preview" />
+                @{
+                    var defaultImg = "https://ui-avatars.com/api/?name=" + Model.UserName + "&background=random";
+                    var userImg = string.IsNullOrWhiteSpace(Model.ImageUrl) ? defaultImg : Model.ImageUrl;
+                }
+                <img src="@userImg" 
+                     alt="Profile Picture" id="profile-img-preview" 
+                     onerror="this.src='@defaultImg'" />
                 <div class="image-overlay">
                     <label for="ImageFile" class="upload-btn">
                         <i class="fas fa-camera"></i>

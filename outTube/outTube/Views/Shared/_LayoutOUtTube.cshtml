@@ -289,7 +289,8 @@
             @if (User.Identity.IsAuthenticated)
             {
                 var currentUser = await UserManager.GetUserAsync(User);
-                var userImg = currentUser?.ImageUrl ?? "https://ui-avatars.com/api/?name=" + (currentUser?.UserName ?? "User") + "&background=random";
+                var defaultImg = "https://ui-avatars.com/api/?name=" + (currentUser?.UserName ?? "User") + "&background=random";
+                var userImg = string.IsNullOrWhiteSpace(currentUser?.ImageUrl) ? defaultImg : currentUser.ImageUrl;
 
                 <button class="menu-btn" title="Create">
                     <span class="material-symbols-outlined">video_call</span>
@@ -300,7 +301,8 @@
                 
                 <a asp-controller="Profile" asp-action="Index">
                     <img src="@userImg" 
-                         alt="Profile" class="profile-img" id="layout-profile-img" />
+                         alt="Profile" class="profile-img" id="layout-profile-img" 
+                         onerror="this.src='@defaultImg'" />
                 </a>
                 
                 <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
