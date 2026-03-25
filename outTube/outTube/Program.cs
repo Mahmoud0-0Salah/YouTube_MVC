@@ -104,6 +104,9 @@ namespace outTube
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(); 
+
             app.UseRouting();
 
             // 4. Use Authentication & Authorization
