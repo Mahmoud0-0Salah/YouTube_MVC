@@ -10,6 +10,8 @@ using outTube.Data;
 using outTube.Models;
 using outTube.Services;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore; // <-- Required for AddFluentValidationAutoValidation / AddFluentValidationClientsideAdapters
 
 namespace outTube
 {
@@ -21,6 +23,20 @@ namespace outTube
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+
+            // Register FluentValidation
+            builder.Services.AddFluentValidationAutoValidation()
+                            .AddFluentValidationClientsideAdapters();
+
+            // Register all validators from the assembly
+            builder.Services.AddValidatorsFromAssemblyContaining<VideoCreateValidator>();
+
+            // Register HttpContextAccessor (needed for SubscribeValidator)
+            builder.Services.AddHttpContextAccessor();
+
+
+
 
             // 1. Register DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>

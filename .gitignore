@@ -53,10 +53,10 @@ bld/
 # =========================
 # ASP.NET Core
 # =========================
-appsettings.Development.json
-appsettings.*.Development.json
 appsettings.json
-*appsettings.json
+appsettings.*.json
+**/appsettings.json
+**/appsettings.*.json
 
 # =========================
 # User secrets
@@ -113,5 +113,4 @@ artifacts/
 # # =========================
 # # Entity Framework Migrations
 # # =========================
-# Migrations/
-# /src/App/Migrations/
+**/Migrations/
