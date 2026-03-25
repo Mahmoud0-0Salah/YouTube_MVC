@@ -85,8 +85,9 @@ coverage/
 # Publish output
 # =========================
 publish/
-wwwroot/images/
-wwwroot/videos/
+**/wwwroot/images/
+**/wwwroot/videos/
+**/wwwroot/uploads/
 
 # =========================
 # Resharper
