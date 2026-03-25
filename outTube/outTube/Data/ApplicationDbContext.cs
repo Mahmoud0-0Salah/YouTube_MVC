@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using outTube.Models;
+using outTube.Models.JunctionTables;
+
+namespace outTube.Data;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {

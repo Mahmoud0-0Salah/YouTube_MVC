@@ -1,5 +1,8 @@
+using outTube.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace outTube.Models.JunctionTables;
 
 public class WatchVideo
 {

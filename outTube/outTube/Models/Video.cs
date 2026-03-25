@@ -1,5 +1,8 @@
+using outTube.Models.JunctionTables;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+namespace outTube.Models;
 
 public class Video
 {

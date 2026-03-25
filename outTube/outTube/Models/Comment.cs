@@ -1,4 +1,7 @@
+using outTube.Models.JunctionTables;
 using System.ComponentModel.DataAnnotations;
+
+namespace outTube.Models;
 
 public class Comment
 {
