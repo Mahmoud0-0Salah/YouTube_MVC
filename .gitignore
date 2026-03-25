@@ -115,5 +115,3 @@ artifacts/
 # # =========================
 Migrations/
 /src/App/Migrations/
-/outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
-/outTube/outTube/Migrations/20260325173101_init.cs
