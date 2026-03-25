@@ -109,8 +109,8 @@ artifacts/
 *.temp
 
 
-# =========================
-# Entity Framework Migrations
-# =========================
-Migrations/
-/src/App/Migrations/
+# # =========================
+# # Entity Framework Migrations
+# # =========================
+# Migrations/
+# /src/App/Migrations/
