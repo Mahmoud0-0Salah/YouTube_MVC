@@ -3,21 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using outTube.Data;
 
 #nullable disable
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
 namespace ourTube.Data.Migrations
-=======
-namespace ourTube.Migrations
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260325200927_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,7 +189,6 @@ namespace ourTube.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("ReviewReport", b =>
                 {
                     b.Property<string>("ReportId")
@@ -213,28 +211,6 @@ namespace ourTube.Migrations
                 });
 
             modelBuilder.Entity("UserSubscriber", b =>
-=======
-            modelBuilder.Entity("outTube.Models.Comment", b =>
-                {
-                    b.Property<string>("CommentId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CommentId");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("outTube.Models.JunctionTables.BannedUser", b =>
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -265,7 +241,6 @@ namespace ourTube.Migrations
                     b.ToTable("UserSubscribers");
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("outTube.Models.Comment", b =>
                 {
                     b.Property<string>("CommentId")
@@ -285,8 +260,6 @@ namespace ourTube.Migrations
                     b.ToTable("Comments");
                 });
 
-=======
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("outTube.Models.JunctionTables.LikeVideo", b =>
                 {
                     b.Property<int>("Id")
@@ -318,30 +291,6 @@ namespace ourTube.Migrations
                     b.ToTable("LikeVideos");
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
-=======
-            modelBuilder.Entity("outTube.Models.JunctionTables.ReviewReport", b =>
-                {
-                    b.Property<string>("ReportId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AdminId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("ReviewedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ReportId");
-
-                    b.HasIndex("AdminId");
-
-                    b.ToTable("ReviewReports");
-                });
-
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("outTube.Models.JunctionTables.UserCreateComment", b =>
                 {
                     b.Property<string>("CommentId")
@@ -398,40 +347,6 @@ namespace ourTube.Migrations
                     b.ToTable("UserCreateReports");
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
-=======
-            modelBuilder.Entity("outTube.Models.JunctionTables.UserSubscriber", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("SubscribedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubscriberId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriberId");
-
-                    b.HasIndex("UserId", "SubscriberId")
-                        .IsUnique();
-
-                    b.ToTable("UserSubscribers");
-                });
-
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("outTube.Models.JunctionTables.WatchVideo", b =>
                 {
                     b.Property<int>("Id")
@@ -619,7 +534,6 @@ namespace ourTube.Migrations
                     b.ToTable("Videos");
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("BannedUser", b =>
                 {
                     b.HasOne("outTube.Models.User", "Admin")
@@ -639,8 +553,6 @@ namespace ourTube.Migrations
                     b.Navigation("User");
                 });
 
-=======
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -692,11 +604,7 @@ namespace ourTube.Migrations
                         .IsRequired();
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("ReviewReport", b =>
-=======
-            modelBuilder.Entity("outTube.Models.JunctionTables.BannedUser", b =>
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
                 {
                     b.HasOne("outTube.Models.User", "Admin")
                         .WithMany("ReviewedReports")
@@ -753,28 +661,6 @@ namespace ourTube.Migrations
                     b.Navigation("Video");
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
-=======
-            modelBuilder.Entity("outTube.Models.JunctionTables.ReviewReport", b =>
-                {
-                    b.HasOne("outTube.Models.User", "Admin")
-                        .WithMany("ReviewedReports")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("outTube.Models.Report", "Report")
-                        .WithOne("ReviewReport")
-                        .HasForeignKey("outTube.Models.JunctionTables.ReviewReport", "ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-
-                    b.Navigation("Report");
-                });
-
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("outTube.Models.JunctionTables.UserCreateComment", b =>
                 {
                     b.HasOne("outTube.Models.Comment", "Comment")
@@ -829,28 +715,6 @@ namespace ourTube.Migrations
                     b.Navigation("Video");
                 });
 
-<<<<<<< HEAD:outTube/outTube/Data/Migrations/ApplicationDbContextModelSnapshot.cs
-=======
-            modelBuilder.Entity("outTube.Models.JunctionTables.UserSubscriber", b =>
-                {
-                    b.HasOne("outTube.Models.User", "Subscriber")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("SubscriberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("outTube.Models.User", "User")
-                        .WithMany("Subscribers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Subscriber");
-
-                    b.Navigation("User");
-                });
-
->>>>>>> f5a0c70e8fddf8ba8ab64cffdb842cac567dad62:outTube/outTube/Migrations/ApplicationDbContextModelSnapshot.cs
             modelBuilder.Entity("outTube.Models.JunctionTables.WatchVideo", b =>
                 {
                     b.HasOne("outTube.Models.User", "User")
