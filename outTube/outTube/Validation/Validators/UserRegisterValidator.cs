@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using FluentValidation;
+using outTube.ViewModels;
 
 public class UserRegisterValidator : AbstractValidator<UserRegisterViewModel>
 {
