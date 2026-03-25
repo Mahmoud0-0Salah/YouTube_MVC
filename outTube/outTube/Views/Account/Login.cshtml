@@ -1,0 +1,178 @@
+@model outTube.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Sign In - OurTube";
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Sign in to continue your journey</p>
+        </div>
+        
+        <form asp-action="Login" method="post" class="auth-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-input" placeholder="Email Address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-input" placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group remember-me">
+                <label asp-for="RememberMe" class="checkbox-label">
+                    <input asp-for="RememberMe" class="checkbox-input" />
+                    <span>Remember Me</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-submit">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a asp-action="Register">Join Now</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modern Auth Styles */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+}
+
+.auth-card {
+    background: var(--card-bg, #1a1a1a);
+    color: #fff;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.auth-header h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #ff0000, #ff5555);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.auth-header p {
+    color: #999;
+    font-size: 1.1rem;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 0.75rem;
+    color: #fff;
+    outline: none;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.form-input:focus {
+    border-color: #ff0000;
+    box-shadow: 0 0 0 3px rgba(255,0,0,0.25);
+}
+
+/*.auth-form .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+*/
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem !important;
+    color: #999 !important;
+}
+
+.checkbox-input {
+    margin-right: 0.75rem !important;
+    width: 18px;
+    height: 18px;
+    accent-color: #ff0000;
+    cursor: pointer;
+}
+
+.btn-primary.auth-submit {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1.1rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    border-radius: 0.85rem;
+    background: #ff0000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255,0,0,0.3);
+}
+
+.btn-primary.auth-submit:hover {
+    background: #cc0000;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255,0,0,0.4);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #999;
+}
+
+.auth-footer a {
+    color: #ff0000;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.text-danger {
+    color: #ff4444;
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+    display: block;
+}
+</style>

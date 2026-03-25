@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+@using Microsoft.AspNetCore.Identity
+@using outTube.Models
+@inject UserManager<User> UserManager
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="utf-8" />
@@ -11,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/YouTubeCloneApp.styles.css" asp-append-version="true" />
 
@@ -280,13 +285,38 @@
             <button class="menu-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
                 <span class="material-symbols-outlined" id="theme-icon">light_mode</span>
             </button>
-            <button class="menu-btn" title="Create">
-                <span class="material-symbols-outlined">video_call</span>
-            </button>
-            <button class="menu-btn" title="Notifications">
-                <span class="material-symbols-outlined">notifications</span>
-            </button>
-            <img src="https://i.pravatar.cc/150?u=myuser" alt="Profile" class="profile-img" />
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManager.GetUserAsync(User);
+                var userImg = currentUser?.ImageUrl ?? "https://ui-avatars.com/api/?name=" + (currentUser?.UserName ?? "User") + "&background=random";
+
+                <button class="menu-btn" title="Create">
+                    <span class="material-symbols-outlined">video_call</span>
+                </button>
+                <button class="menu-btn" title="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                
+                <a asp-controller="Profile" asp-action="Index">
+                    <img src="@userImg" 
+                         alt="Profile" class="profile-img" id="layout-profile-img" />
+                </a>
+                
+                <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="menu-btn" title="Logout">
+                        <span class="material-symbols-outlined">logout</span>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-auth btn-login" style="text-decoration:none !important; border: 1px solid #3ea6ff; color: #3ea6ff; border-radius: 20px; padding: 5px 15px; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    Sign In
+                </a>
+            }
         </div>
     </header>
 
@@ -300,27 +330,43 @@
                 <!-- <a href="#" class="sb-link">
                     <span class="material-symbols-outlined">app_shortcut</span>Shorts
                 </a> -->
-                <a href="#" class="sb-link">
-                    <span class="material-symbols-outlined">subscriptions</span>Subscriptions
-                </a>
-            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="sidebar-section">
+                    <a href="#" class="sb-link">
+                        <span class="material-symbols-outlined">subscriptions</span>Subscriptions
+                    </a>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">You</h3>
+                    <a href="#" class="sb-link">
+                        <span class="material-symbols-outlined">history</span>History
+                    </a>
+                    <a href="#" class="sb-link">
+                        <span class="material-symbols-outlined">smart_display</span>Your videos
+                    </a>
+                    <a href="#" class="sb-link">
+                        <span class="material-symbols-outlined">thumb_up</span>Liked videos
+                    </a>
+                    <a asp-controller="Home" asp-action="Privacy" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Privacy" ? "active" : "")">
+                        <span class="material-symbols-outlined">privacy_tip</span>Privacy
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="sidebar-section" style="padding: 16px 24px;">
+                    <p style="font-size: 14px; margin-bottom: 12px;">Sign in to like videos, comment, and subscribe.</p>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-login" style="border: 1px solid #3ea6ff; color: #3ea6ff; border-radius: 20px; padding: 5px 15px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined">account_circle</span> Sign In
+                    </a>
+                </div>
+            }
             
             <div class="sidebar-section">
-                <h3 class="sidebar-title">You</h3>
-                <a href="#" class="sb-link">
-                    <span class="material-symbols-outlined">history</span>History
-                </a>
-                <a href="#" class="sb-link">
-                    <span class="material-symbols-outlined">smart_display</span>Your videos
-                </a>
-                <!-- <a href="#" class="sb-link">
-                    <span class="material-symbols-outlined">schedule</span>Watch later
-                </a> -->
-                <a href="#" class="sb-link">
-                    <span class="material-symbols-outlined">thumb_up</span>Liked videos
-                </a>
-                <a asp-controller="Home" asp-action="Privacy" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Privacy" ? "active" : "")">
-                    <span class="material-symbols-outlined">privacy_tip</span>Privacy
+                <a asp-controller="Debug" asp-action="Accounts" class="sb-link">
+                    <span class="material-symbols-outlined">bug_report</span>Debug Accounts
                 </a>
             </div>
             
@@ -355,6 +401,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
             // Sidebar Toggle Logic
