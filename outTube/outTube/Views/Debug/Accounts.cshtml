@@ -31,8 +31,13 @@
                 {
                     <tr>
                         <td>
-                            <img src="@(string.IsNullOrEmpty(user.ImageUrl) ? "https://ui-avatars.com/api/?name=" + user.UserName + "&background=random" : user.ImageUrl)" 
-                                 class="debug-avatar" />
+                            @{
+                                var defaultImg = "https://ui-avatars.com/api/?name=" + user.UserName + "&background=random";
+                                var userImg = string.IsNullOrWhiteSpace(user.ImageUrl) ? defaultImg : user.ImageUrl;
+                            }
+                            <img src="@userImg" 
+                                 class="debug-avatar" 
+                                 onerror="this.src='@defaultImg'" />
                         </td>
                         <td>
                             <div class="name-cell">
