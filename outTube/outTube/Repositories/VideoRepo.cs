@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ourTube.Repositories.Interfaces;
 using ourTube.ViewModels;
 using ourTube.ViewModels.Video;
 using OurTube.Repositories;
+using outTube.Models;
+using outTube.Data;
 
 namespace ourTube.Repositories
 {

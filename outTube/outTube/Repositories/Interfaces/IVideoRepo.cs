@@ -1,6 +1,7 @@
-﻿using ourTube.ViewModels;
+using ourTube.ViewModels;
 using ourTube.ViewModels.Video;
 using OurTube.Repositories.Interfaces.Common;
+using outTube.Models;
 
 namespace ourTube.Repositories.Interfaces
 {

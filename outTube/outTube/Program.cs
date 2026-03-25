@@ -26,10 +26,7 @@ namespace outTube
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<IVideoRepo,VideoRepo>();
-
-			var app = builder.Build();
-            // Register Services
+            builder.Services.AddScoped<IVideoRepo, VideoRepo>();
             builder.Services.AddScoped<ITokenService, TokenService>();
 
             // 2. Register Identity
