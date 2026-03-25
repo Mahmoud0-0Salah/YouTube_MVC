@@ -292,9 +292,11 @@
                 var defaultImg = "https://ui-avatars.com/api/?name=" + (currentUser?.UserName ?? "User") + "&background=random";
                 var userImg = string.IsNullOrWhiteSpace(currentUser?.ImageUrl) ? defaultImg : currentUser.ImageUrl;
 
-                <button class="menu-btn" title="Create">
-                    <span class="material-symbols-outlined">video_call</span>
-                </button>
+                <form asp-action="Create" asp-controller="Video" method="get">
+                    <button class="menu-btn" title="Create">
+                        <span class="material-symbols-outlined">video_call</span>
+                    </button>
+                </form>
                 <button class="menu-btn" title="Notifications">
                     <span class="material-symbols-outlined">notifications</span>
                 </button>
