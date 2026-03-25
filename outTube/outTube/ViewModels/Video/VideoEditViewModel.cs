@@ -1,4 +1,4 @@
-﻿namespace outTube.ViewModels
+﻿namespace ourTube.ViewModels.Video
 {
     public class VideoEditViewModel
     {

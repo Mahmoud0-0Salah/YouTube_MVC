@@ -1,4 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using ourTube.Repositories;
+using ourTube.Repositories.Interfaces;
+using OurTube.Repositories;
+using OurTube.Repositories.Interfaces.Common;
 
 namespace outTube
 {
@@ -15,7 +19,9 @@ namespace outTube
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            var app = builder.Build();
+            builder.Services.AddScoped<IVideoRepo,VideoRepo>();
+
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

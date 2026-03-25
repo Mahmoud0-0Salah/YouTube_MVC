@@ -1,0 +1,27 @@
+﻿@using ourTube.ViewModels
+@using ourTube.ViewModels.Video
+@model PaginatedList<VideoGetViewModel>
+
+@foreach (var video in Model)
+{
+        <div class="video-card">
+        <a href="https://www.youtube.com/watch?v=TUuxZFwLP6c">
+            <div class="thumbnail-container">
+                <img src="@video.Thumb" alt="Thumbnail for @video.Title" class="thumbnail" loading="lazy" />
+                <div class="duration">@video.Duration</div>
+            </div>
+        </a>
+            <div class="video-info">
+                <a href="#">
+                    <img src="@video.Avatar" alt="@video.Channel" class="channel-avatar" loading="lazy" />
+                </a>
+                <div class="video-details">
+                    <h3 class="video-title" title="@video.Title">@video.Title</h3>
+                    <a href="#" class="channel-name" title="@video.Channel">@video.Channel</a>
+                    <div class="video-meta">
+                        <span>@video.Views</span> &bull; <span>@video.Time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+}
