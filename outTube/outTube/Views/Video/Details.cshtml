@@ -190,6 +190,51 @@ video {
 .meta-stats span {
     display: inline-block;
 }
+
+/* Comment Action Buttons */
+.btn-comment-action {
+    background: var(--nav-bg, rgba(20, 20, 20, 0.6));
+    color: var(--text-color, #ccc);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-comment-action:hover {
+    background: rgba(255, 0, 0, 0.15);
+    color: #ff0000;
+    border-color: rgba(255, 0, 0, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.15);
+}
+
+.btn-comment-action:active {
+    transform: translateY(0);
+}
+
+.edit-comment-input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-color, rgba(255,255,255,0.2));
+    border-radius: 8px;
+    color: var(--text-color, #fff);
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.edit-comment-input:focus {
+    border-color: #ff0000;
+    box-shadow: 0 0 8px rgba(255,0,0,0.3);
+}
 </style>
 
 <div class="details-container">
@@ -252,16 +297,16 @@ video {
 
     <!-- Comments Section -->
     <div class="comments-section" style="margin-top: 30px;">
-        <h3 style="color: var(--text-color, #fff); margin-bottom: 20px;">@Model.NumOfComments Comment</h3>
+        <h3 id="commentsCount" style="color: var(--text-color, #fff); margin-bottom: 20px;">@Model.NumOfComments Comment</h3>
         @if (User.Identity.IsAuthenticated)
         {
             var currentUser = await userManager.GetUserAsync(User);
             <div class="add-comment" style="display: flex; gap: 15px; margin-bottom: 30px;">
                 <img src="@currentUser?.ImageUrl" alt="User" class="channel-avatar" style="width: 44px; height: 44px;" onerror="this.src='/images/default-avatar.png'" />
                 <div style="flex-grow: 1;">
-                    <input id="comment" type="text" placeholder="Add a comment..." style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.2)); color: #fff; padding: 8px 0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderBottomColor='#ff0000'" onblur="this.style.borderBottomColor='rgba(255,255,255,0.2)'" />
+                    <input id="comment" type="text" placeholder="Add a comment..." style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.2)); color: var(--text-color, #fff); padding: 8px 0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderBottomColor='#ff0000'" onblur="this.style.borderBottomColor='var(--border-color, rgba(255,255,255,0.2))'" />
                     <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px;">
-                        <button class="btn-subscribe" style="border-radius: 18px;" onclick="sendComment()">Comment</button>
+                        <button class="btn-subscribe" style="border-radius: 18px;" onclick="sendCreatedComment()">Comment</button>
                     </div>
                 </div>
             </div>
@@ -270,11 +315,26 @@ video {
             <!-- Sample Comment -->
             @foreach(var comment in Model.Comments)
             {
-                <div class="comment-item" style="display: flex; gap: 15px; margin-bottom: 24px;">
+                <div class="comment-item" id="comment-@comment.CommentId" style="display: flex; gap: 15px; margin-bottom: 24px;">
                     <img src="@comment.UserAvatar" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
-                    <div>
-                        <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">@comment.UserName <span class="time-ago-text" data-date="@comment.UpdatedAt.ToString("o")" style="color: #aaa; font-weight: 400; font-size: 12px; margin-left: 8px;"></span></div>
-                        <div style="color: #eee; font-size: 14px; line-height: 1.4; margin-bottom: 8px;">@comment.Content</div>
+                    <div style="flex-grow: 1;">
+                        <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">@comment.UserName <span class="time-ago-text" data-date="@comment.UpdatedAt.ToString("o")" style="color: var(--text-muted, #aaa); font-weight: 400; font-size: 12px; margin-left: 8px;"></span></div>
+                        <div class="comment-content" style="color: var(--text-color, #eee); font-size: 14px; line-height: 1.4; margin-bottom: 8px;">@comment.Content</div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var currentUserForCheck = await userManager.GetUserAsync(User);
+                            if (currentUserForCheck?.Id == comment.UserId)
+                            {
+                                <div class="comment-actions" style="display: flex; gap: 10px; margin-top: 8px;">
+                                    <button class="btn-comment-action" onclick="editComment('@comment.CommentId')">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span> Edit
+                                    </button>
+                                    <button class="btn-comment-action" onclick="deleteComment('@comment.CommentId')">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span> Delete
+                                    </button>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
             }
@@ -286,22 +346,19 @@ video {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/9.0.6/signalr.min.js" integrity="sha512-kkMt8UThSmWcdXLYFaGZ/U6vyWSNLZMUWQ5SMeF80pGqrEkH5ei9D/3MbVQpB8p7D5C3A4vlX7BpsWTT2BfB6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    var hub = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
-    hub.start().then(function () {
-        console.log("Connection Success");
-    });
-    function sendComment() {
-        const comment = {
-            videoid: '@Model.Id',
-            content: document.getElementById("comment").value,
-            userid: null
+    @{
+        var jsUserId = "";
+        if (User.Identity.IsAuthenticated)
+        {
+            var u = await userManager.GetUserAsync(User);
+            if(u != null) { jsUserId = u.Id; }
         }
-        document.getElementById("comment").value = ""
-        hub.invoke("CreateComment", comment)
     }
+    const currentUserId = '@jsUserId';
+
     function timeAgo(dateString) {
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString; 
+        if (isNaN(date.getTime())) return dateString;
 
         const seconds = Math.floor((new Date() - date) / 1000);
         if (seconds < 0) return "Just now"; // handles slight time sync issues
@@ -320,6 +377,59 @@ video {
         return seconds < 30 ? "Just now" : Math.floor(seconds) + " seconds ago";
     }
 
+    // Hub connection for real-time comments
+    var hub = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
+    hub.start().then(function () {
+        console.log("Connection Success");
+    });
+    function sendCreatedComment() {
+        const comment = {
+            videoid: '@Model.Id',
+            content: document.getElementById("comment").value,
+            userid: null
+        }
+        document.getElementById("comment").value = ""
+        hub.invoke("Create", comment)
+    }
+
+    function deleteComment(commentId) {
+        if(confirm("Are you sure you want to delete this comment?")) {
+            hub.invoke("Delete", commentId);
+        }
+    }
+
+    function editComment(commentId) {
+        var commentItem = document.getElementById("comment-" + commentId);
+        var contentDiv = commentItem.querySelector('.comment-content');
+        var originalText = contentDiv.innerText;
+
+        contentDiv.innerHTML = `
+            <input type="text" id="edit-input-${commentId}" value="${originalText}" class="edit-comment-input" />
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-comment-action" onclick="saveEdit('${commentId}')">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span> Save
+                </button>
+                <button class="btn-comment-action" onclick="cancelEdit('${commentId}', '${originalText.replace(/'/g, "\\'")}')">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">cancel</span> Cancel
+                </button>
+            </div>
+        `;
+        document.getElementById(`edit-input-${commentId}`).focus();
+        commentItem.querySelector('.comment-actions').style.display = 'none';
+    }
+
+    function saveEdit(commentId) {
+        var inputE = document.getElementById(`edit-input-${commentId}`);
+        hub.invoke("Update", commentId, inputE.value);
+    }
+
+    function cancelEdit(commentId, originalText) {
+        var commentItem = document.getElementById("comment-" + commentId);
+        var contentDiv = commentItem.querySelector('.comment-content');
+        contentDiv.innerText = originalText;
+        commentItem.querySelector('.comment-actions').style.display = 'flex';
+    }
+
     hub.on("ReceiveComment", function (obj) {
         console.log(obj);
         var div = document.createElement("div");
@@ -327,14 +437,59 @@ video {
         div.style.display = "flex";
         div.style.gap = "15px";
         div.style.marginBottom = "24px";
+        div.id = `comment-${obj.commentId}`;
+
+        let actionBtns = '';
+        if (currentUserId && obj.userId === currentUserId) {
+            actionBtns = `
+                <div class="comment-actions" style="display: flex; gap: 10px; margin-top: 8px;">
+                    <button class="btn-comment-action" onclick="editComment('${obj.commentId}')">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span> Edit
+                    </button>
+                    <button class="btn-comment-action" onclick="deleteComment('${obj.commentId}')">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span> Delete
+                    </button>
+                </div>
+            `;
+        }
+
         div.innerHTML = `
             <img src="${obj.userAvatar}" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
-                <div>
-                    <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">${obj.userName} <span style="color: #aaa; font-weight: 400; font-size: 12px; margin-left: 8px;">${timeAgo(obj.updatedAt)}</span></div>
-                    <div style="color: #eee; font-size: 14px; line-height: 1.4; margin-bottom: 8px;">${obj.content}</div>
-                </div>`
+                <div style="flex-grow: 1;">
+                    <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">${obj.userName} <span class="time-ago-text" data-date="${obj.updatedAt}" style="color: var(--text-muted, #aaa); font-weight: 400; font-size: 12px; margin-left: 8px;">${timeAgo(obj.updatedAt)}</span></div>
+                    <div class="comment-content" style="color: var(--text-color, #eee); font-size: 14px; line-height: 1.4; margin-bottom: 8px;">${obj.content}</div>
+                    ${actionBtns}
+                </div>`;
         document.querySelector('.comments-list').appendChild(div);
+        document.querySelector('#commentsCount').innerText = parseInt(document.querySelector('#commentsCount').innerText) + 1 + " Comments";
     });
+
+    hub.on("ReceiveDeletedComment", function(commentId) {
+        console.log(commentId);
+        var commentElement = document.getElementById(`comment-${commentId}`);
+        if(commentElement) {
+            commentElement.remove();
+            document.querySelector('#commentsCount').innerText = parseInt(document.querySelector('#commentsCount').innerText) - 1 + " Comments";
+        }
+    });
+
+    hub.on("ReceiveUpdatedComment", function(obj) {
+        var commentItem = document.getElementById("comment-" + obj.commentId);
+        if(commentItem) {
+            var contentDiv = commentItem.querySelector('.comment-content');
+            contentDiv.innerText = obj.content;
+            var actionsDiv = commentItem.querySelector('.comment-actions');
+            if(actionsDiv) {
+                actionsDiv.style.display = 'flex';
+            }
+            var timeSpan = commentItem.querySelector('.time-ago-text');
+            if(timeSpan) {
+                timeSpan.setAttribute('data-date', obj.updatedAt);
+                timeSpan.innerText = timeAgo(obj.updatedAt);
+            }
+        }
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
         // Evaluate timeAgo for all existing comments
         document.querySelectorAll('.time-ago-text').forEach(el => {
