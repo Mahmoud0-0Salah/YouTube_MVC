@@ -38,34 +38,13 @@ namespace OurTube.Controllers
 
         public async Task<IActionResult> Details(string id)
         {
-            Video video = videoRepository.GetByCondition(v => v.VideoId == id).FirstOrDefault();
+            var user = await userManager.GetUserAsync(User);
+            VideoDetailsViewModel video = videoRepository.GetVideoDetails(id, user?.Id);
             if (video == null)
             {
                 return NotFound();
             }
-            var user = await userManager.GetUserAsync(User);
-            WatchVideo watchVideo = new WatchVideo()
-            {
-                VideoId = video.VideoId,
-                UserId = user.Id,
-                WatchedAt = DateTime.Now
-            };
-            watchVideoRepo.Create(watchVideo);
-            watchVideoRepo.Save();
-            VideoGetViewModel model = new VideoGetViewModel()
-            {
-                Id = video.VideoId,
-                Title = video.Title,
-                Description = video.Description ?? string.Empty,
-                Channel = video.User != null ? $"{video.User.FirstName} {video.User.LastName}" : "Unknown User",
-                Views = watchVideoRepo.GetByCondition(wv => wv.VideoId == video.VideoId).Count(),
-                Time = video.CreatedAt.ToString("yyyy-MM-dd"),
-                Thumb = video.ThumbnailUrl,
-                Avatar = user.ImageUrl,
-                Duration = video.Duration.ToString(@"hh\:mm\:ss"),
-                VideoUrl = video.VideoUrl
-            };
-            return View(model);
+            return View(video); 
         }
 
 

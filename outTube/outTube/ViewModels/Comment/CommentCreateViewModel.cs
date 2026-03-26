@@ -10,4 +10,5 @@ public class CommentCreateViewModel
     [NoProfanity]
     [Display(Name = "Comment")]
     public string Content { get; set; }
+    public string? UserId { get; internal set; }
 }

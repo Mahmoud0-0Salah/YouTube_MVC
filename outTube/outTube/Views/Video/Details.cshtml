@@ -1,5 +1,6 @@
-@model ourTube.ViewModels.Video.VideoGetViewModel
-
+@using Microsoft.AspNetCore.Identity
+@model ourTube.ViewModels.Video.VideoDetailsViewModel
+@inject UserManager<User> userManager
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -251,36 +252,98 @@ video {
 
     <!-- Comments Section -->
     <div class="comments-section" style="margin-top: 30px;">
-        <h3 style="color: var(--text-color, #fff); margin-bottom: 20px;">1 Comment</h3>
-        <div class="add-comment" style="display: flex; gap: 15px; margin-bottom: 30px;">
-            <img src="@Model.Avatar" alt="User" class="channel-avatar" style="width: 44px; height: 44px;" onerror="this.src='/images/default-avatar.png'" />
-            <div style="flex-grow: 1;">
-                <input type="text" placeholder="Add a comment..." style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.2)); color: #fff; padding: 8px 0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderBottomColor='#ff0000'" onblur="this.style.borderBottomColor='rgba(255,255,255,0.2)'" />
-                <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px;">
-                    <button class="btn-subscribe" style="border-radius: 18px;">Comment</button>
-                </div>
-            </div>
-        </div>
-        <div class="comments-list">
-            <!-- Sample Comment -->
-            <div class="comment-item" style="display: flex; gap: 15px; margin-bottom: 24px;">
-                <img src="/images/default-avatar.png" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
-                <div>
-                    <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">John Doe <span style="color: #aaa; font-weight: 400; font-size: 12px; margin-left: 8px;">2 days ago</span></div>
-                    <div style="color: #eee; font-size: 14px; line-height: 1.4; margin-bottom: 8px;">This is a fantastic video! Really enjoyed the editing and the content. Keep it up!</div>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-action" style="padding: 4px 8px;"><span class="material-symbols-outlined" style="font-size: 18px;">thumb_up</span><span style="font-size: 12px; margin-left: 4px;">4</span></button>
-                        <span style="color: #aaa; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 8px;">Reply</span>
+        <h3 style="color: var(--text-color, #fff); margin-bottom: 20px;">@Model.NumOfComments Comment</h3>
+        @if (User.Identity.IsAuthenticated)
+        {
+            var currentUser = await userManager.GetUserAsync(User);
+            <div class="add-comment" style="display: flex; gap: 15px; margin-bottom: 30px;">
+                <img src="@currentUser?.ImageUrl" alt="User" class="channel-avatar" style="width: 44px; height: 44px;" onerror="this.src='/images/default-avatar.png'" />
+                <div style="flex-grow: 1;">
+                    <input id="comment" type="text" placeholder="Add a comment..." style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.2)); color: #fff; padding: 8px 0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderBottomColor='#ff0000'" onblur="this.style.borderBottomColor='rgba(255,255,255,0.2)'" />
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px;">
+                        <button class="btn-subscribe" style="border-radius: 18px;" onclick="sendComment()">Comment</button>
                     </div>
                 </div>
             </div>
+        }
+        <div class="comments-list">
+            <!-- Sample Comment -->
+            @foreach(var comment in Model.Comments)
+            {
+                <div class="comment-item" style="display: flex; gap: 15px; margin-bottom: 24px;">
+                    <img src="@comment.UserAvatar" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
+                    <div>
+                        <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">@comment.UserName <span class="time-ago-text" data-date="@comment.UpdatedAt.ToString("o")" style="color: #aaa; font-weight: 400; font-size: 12px; margin-left: 8px;"></span></div>
+                        <div style="color: #eee; font-size: 14px; line-height: 1.4; margin-bottom: 8px;">@comment.Content</div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/9.0.6/signalr.min.js" integrity="sha512-kkMt8UThSmWcdXLYFaGZ/U6vyWSNLZMUWQ5SMeF80pGqrEkH5ei9D/3MbVQpB8p7D5C3A4vlX7BpsWTT2BfB6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+    var hub = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
+    hub.start().then(function () {
+        console.log("Connection Success");
+    });
+    function sendComment() {
+        const comment = {
+            videoid: '@Model.Id',
+            content: document.getElementById("comment").value,
+            userid: null
+        }
+        document.getElementById("comment").value = ""
+        hub.invoke("CreateComment", comment)
+    }
+    function timeAgo(dateString) {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString; 
+
+        const seconds = Math.floor((new Date() - date) / 1000);
+        if (seconds < 0) return "Just now"; // handles slight time sync issues
+
+        let interval = seconds / 31536000;
+        if (interval >= 1) return Math.floor(interval) + " years ago";
+        interval = seconds / 2592000;
+        if (interval >= 1) return Math.floor(interval) + " months ago";
+        interval = seconds / 86400;
+        if (interval >= 1) return Math.floor(interval) + " days ago";
+        interval = seconds / 3600;
+        if (interval >= 1) return Math.floor(interval) + " hours ago";
+        interval = seconds / 60;
+        if (interval >= 1) return Math.floor(interval) + " minutes ago";
+
+        return seconds < 30 ? "Just now" : Math.floor(seconds) + " seconds ago";
+    }
+
+    hub.on("ReceiveComment", function (obj) {
+        console.log(obj);
+        var div = document.createElement("div");
+        div.className = "comment-item";
+        div.style.display = "flex";
+        div.style.gap = "15px";
+        div.style.marginBottom = "24px";
+        div.innerHTML = `
+            <img src="${obj.userAvatar}" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
+                <div>
+                    <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">${obj.userName} <span style="color: #aaa; font-weight: 400; font-size: 12px; margin-left: 8px;">${timeAgo(obj.updatedAt)}</span></div>
+                    <div style="color: #eee; font-size: 14px; line-height: 1.4; margin-bottom: 8px;">${obj.content}</div>
+                </div>`
+        document.querySelector('.comments-list').appendChild(div);
+    });
     document.addEventListener('DOMContentLoaded', () => {
+        // Evaluate timeAgo for all existing comments
+        document.querySelectorAll('.time-ago-text').forEach(el => {
+            const dateStr = el.getAttribute('data-date');
+            if (dateStr) {
+                el.innerText = timeAgo(dateStr);
+            }
+        });
+
         const player = new Plyr('#player', {
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen']
         });
