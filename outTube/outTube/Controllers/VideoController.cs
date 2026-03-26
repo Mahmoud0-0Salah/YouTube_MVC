@@ -7,17 +7,26 @@ using OurTube.Repositories.Interfaces;
 using outTube.Models;
 using System.Security.Claims;
 using TagLib;
+using outTube.Models.JunctionTables;
+using ourTube.ViewModels.Video;
 
 namespace OurTube.Controllers
 {
     public class VideoController : Controller
     {
         private readonly IVideoRepo videoRepository;
+        private readonly IWatchVideoRepo watchVideoRepo;
+        private readonly UserManager<User> userManager;
         private readonly IWebHostEnvironment webHost;
 
-        public VideoController(IVideoRepo videoRepository, IWebHostEnvironment webHost)
+        public VideoController(IVideoRepo videoRepository,
+                               IWatchVideoRepo watchVideoRepo,
+                               UserManager<User> userManager,
+                               IWebHostEnvironment webHost)
         {
             this.videoRepository = videoRepository;
+            this.watchVideoRepo = watchVideoRepo;
+            this.userManager = userManager;
             this.webHost = webHost;
         }
 
@@ -27,14 +36,35 @@ namespace OurTube.Controllers
             return View(videos);
         }
 
-        public IActionResult Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
             Video video = videoRepository.GetByCondition(v => v.VideoId == id).FirstOrDefault();
             if (video == null)
             {
                 return NotFound();
             }
-            return View(video);
+            var user = await userManager.GetUserAsync(User);
+            WatchVideo watchVideo = new WatchVideo()
+            {
+                VideoId = video.VideoId,
+                UserId = user.Id,
+                WatchedAt = DateTime.Now
+            };
+            watchVideoRepo.Create(watchVideo);
+            watchVideoRepo.Save();
+            VideoGetViewModel model = new VideoGetViewModel()
+            {
+                Id = video.VideoId,
+                Title = video.Title,
+                Channel = video.User.UserName,
+                Views = watchVideoRepo.GetByCondition(wv => wv.VideoId == video.VideoId).Count(),
+                Time = video.CreatedAt.ToString("yyyy-MM-dd"),
+                Thumb = video.ThumbnailUrl,
+                Avatar = user.ImageUrl,
+                Duration = video.Duration.ToString(@"hh\:mm\:ss"),
+                VideoUrl = video.VideoUrl
+            };
+            return View(model);
         }
 
 
