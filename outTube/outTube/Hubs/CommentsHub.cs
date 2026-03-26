@@ -18,10 +18,24 @@ namespace ourTube.Hubs
             this.commentService = commentService;
         }
 
-        public async Task CreateComment(CommentCreateViewModel model)
+        public async Task Create(CommentCreateViewModel model)
         {
             CommentGetViewModel comment = await commentService.Create(model);
             await Clients.All.SendAsync("ReceiveComment", comment);
+        }
+        public async Task Delete(string commentId)
+        {
+            await commentService.Delete(commentId);
+            await Clients.All.SendAsync("ReceiveDeletedComment", commentId);
+        }
+
+        public async Task Update(string commentId, string content)
+        {
+            CommentGetViewModel comment = await commentService.Update(commentId, content);
+            if (comment != null)
+            {
+                await Clients.All.SendAsync("ReceiveUpdatedComment", comment);
+            }
         }
     }
 }
