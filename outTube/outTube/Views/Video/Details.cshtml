@@ -218,16 +218,12 @@ video {
         <div class="action-buttons">
             <!-- Grouped Like/Dislike -->
             <div class="action-group">
-                <button class="btn-action">
+                <button class="btn-action" id="likeBtn">
                     <span class="material-symbols-outlined">thumb_up</span>
-                    Like
-                </button>
-                <div class="divider"></div>
-                <button class="btn-action" style="padding-left:12px; padding-right:12px;">
-                    <span class="material-symbols-outlined">thumb_down</span>
+                    <span id="likeText">Like</span>
                 </button>
             </div>
-            
+
             <!-- Individual Actions -->
             <button class="btn-action btn-single">
                 <span class="material-symbols-outlined">share</span>
@@ -250,7 +246,35 @@ video {
                 <span>• @Model.Duration</span>
             }
         </div>
-        <p>Welcome to this amazing video! Support the channel by subscribing for more awesome content.</p>
+        <p>@(string.IsNullOrWhiteSpace(Model.Description) ? "No description provided." : Model.Description)</p>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section" style="margin-top: 30px;">
+        <h3 style="color: var(--text-color, #fff); margin-bottom: 20px;">1 Comment</h3>
+        <div class="add-comment" style="display: flex; gap: 15px; margin-bottom: 30px;">
+            <img src="@Model.Avatar" alt="User" class="channel-avatar" style="width: 44px; height: 44px;" onerror="this.src='/images/default-avatar.png'" />
+            <div style="flex-grow: 1;">
+                <input type="text" placeholder="Add a comment..." style="width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.2)); color: #fff; padding: 8px 0; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderBottomColor='#ff0000'" onblur="this.style.borderBottomColor='rgba(255,255,255,0.2)'" />
+                <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px;">
+                    <button class="btn-subscribe" style="border-radius: 18px;">Comment</button>
+                </div>
+            </div>
+        </div>
+        <div class="comments-list">
+            <!-- Sample Comment -->
+            <div class="comment-item" style="display: flex; gap: 15px; margin-bottom: 24px;">
+                <img src="/images/default-avatar.png" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
+                <div>
+                    <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">John Doe <span style="color: #aaa; font-weight: 400; font-size: 12px; margin-left: 8px;">2 days ago</span></div>
+                    <div style="color: #eee; font-size: 14px; line-height: 1.4; margin-bottom: 8px;">This is a fantastic video! Really enjoyed the editing and the content. Keep it up!</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-action" style="padding: 4px 8px;"><span class="material-symbols-outlined" style="font-size: 18px;">thumb_up</span><span style="font-size: 12px; margin-left: 4px;">4</span></button>
+                        <span style="color: #aaa; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 8px;">Reply</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -260,5 +284,23 @@ video {
         const player = new Plyr('#player', {
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen']
         });
+
+        const likeBtn = document.getElementById('likeBtn');
+        const likeText = document.getElementById('likeText');
+        let currentLikes = 0;
+
+        if (likeBtn && likeText) {
+            likeBtn.addEventListener('click', () => {
+                if (currentLikes === 0) {
+                    currentLikes = 1;
+                    likeText.innerText = currentLikes;
+                    likeBtn.style.color = '#ff0000';
+                } else {
+                    currentLikes = 0;
+                    likeText.innerText = 'Like';
+                    likeBtn.style.color = '';
+                }
+            });
+        }
     });
 </script>

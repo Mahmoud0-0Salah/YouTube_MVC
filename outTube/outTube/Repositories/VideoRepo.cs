@@ -24,9 +24,10 @@ namespace ourTube.Repositories
 			   .Select(v => new VideoGetViewModel
 			   {
 				   Id = v.VideoId,	
-                   Views = v.Views.Count,
+				   Views = v.Views.Count,
 				   Title = v.Title,
-				   Channel = v.User.UserName,
+				   Description = v.Description ?? string.Empty,
+				   Channel = v.User.FirstName + " " + v.User.LastName,
 				   Duration = v.Duration.ToString(@"hh\:mm\:ss"),
 				   Time = v.CreatedAt.ToString("MMM dd, yyyy"),
 				   Thumb = v.ThumbnailUrl,
