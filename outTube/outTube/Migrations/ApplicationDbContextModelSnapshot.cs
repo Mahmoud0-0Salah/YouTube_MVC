@@ -369,8 +369,7 @@ namespace ourTube.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("VideoId", "UserId")
-                        .IsUnique();
+                    b.HasIndex("VideoId", "UserId");
 
                     b.ToTable("WatchVideos");
                 });
