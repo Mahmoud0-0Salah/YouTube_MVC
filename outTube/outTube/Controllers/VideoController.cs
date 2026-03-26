@@ -23,7 +23,7 @@ namespace OurTube.Controllers
 
         public IActionResult Index()
         {
-            List<Video> videos = videoRepository.GetAll();
+            List<Video> videos = videoRepository.GetAll().ToList();
             return View(videos);
         }
 

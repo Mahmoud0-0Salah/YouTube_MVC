@@ -40,29 +40,29 @@ namespace OurTube.Repositories
             }
         }
 
-        public List<T> GetAll()
+        public IQueryable<T> GetAll()
         {
             try
             {
-                return context.Set<T>().ToList();
+                return context.Set<T>();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return new List<T>();
+                return new List<T>().AsQueryable();
             }
         }
 
-        public List<T> GetByCondition(Expression<Func<T, bool>> predicate)
+        public IQueryable<T> GetByCondition(Expression<Func<T, bool>> predicate)
         {
             try
             {
-                return context.Set<T>().Where(predicate).ToList();
+                return context.Set<T>().Where(predicate) ;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return new List<T>();
+                return new List<T>().AsQueryable();
             }
         }
 
