@@ -32,10 +32,9 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasIndex(lv => new { lv.VideoId, lv.UserId })
             .IsUnique();
 
-        // WatchVideo: (VideoId, UserId) should be unique
+        // WatchVideo: (VideoId, UserId) should not be unique to allow repeat views
         builder.Entity<WatchVideo>()
-            .HasIndex(wv => new { wv.VideoId, wv.UserId })
-            .IsUnique();
+            .HasIndex(wv => new { wv.VideoId, wv.UserId });
 
         // UserSubscriber: (UserId, SubscriberId) should be unique
         builder.Entity<UserSubscriber>()
