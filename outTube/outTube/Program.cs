@@ -44,6 +44,7 @@ namespace outTube
 
             builder.Services.AddScoped<IVideoRepo, VideoRepo>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IWatchVideoRepo, WatchVideoRepo>();
 
             // 2. Register Identity
             builder.Services.AddIdentity<User, IdentityRole>(options =>

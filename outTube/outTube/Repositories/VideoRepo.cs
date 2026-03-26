@@ -23,7 +23,8 @@ namespace ourTube.Repositories
 			   .Include(v => v.Views)
 			   .Select(v => new VideoGetViewModel
 			   {
-				   Views = v.Views.Count,
+				   Id = v.VideoId,	
+                   Views = v.Views.Count,
 				   Title = v.Title,
 				   Channel = v.User.UserName,
 				   Duration = v.Duration.ToString(@"hh\:mm\:ss"),
