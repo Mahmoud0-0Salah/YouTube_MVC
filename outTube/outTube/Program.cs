@@ -1,17 +1,19 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using ourTube.Hubs; // <-- Required for AddFluentValidationAutoValidation / AddFluentValidationClientsideAdapters
 using ourTube.Repositories;
 using ourTube.Repositories.Interfaces;
+using ourTube.Services;
 using OurTube.Repositories;
 using OurTube.Repositories.Interfaces.Common;
-using Microsoft.IdentityModel.Tokens;
 using outTube.Data;
 using outTube.Models;
 using outTube.Services;
 using System.Text;
-using FluentValidation;
-using FluentValidation.AspNetCore; // <-- Required for AddFluentValidationAutoValidation / AddFluentValidationClientsideAdapters
 
 namespace outTube
 {
@@ -42,9 +44,13 @@ namespace outTube
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddSignalR();
             builder.Services.AddScoped<IVideoRepo, VideoRepo>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IWatchVideoRepo, WatchVideoRepo>();
+            builder.Services.AddScoped<ICommentRepo, CommentRepo>();
+            builder.Services.AddScoped<IUserCreateCommentRepo, UserCreateCommentRepo>();
+            builder.Services.AddScoped<CommentService>();
 
             // 2. Register Identity
             builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -113,7 +119,7 @@ namespace outTube
             // 4. Use Authentication & Authorization
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.MapHub<CommentsHub>("/commentsHub");
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

@@ -10,5 +10,6 @@ namespace ourTube.Repositories.Interfaces
 		PaginatedList<VideoGetViewModel> GetVideosInfo(int page = 1, int pageSize = 8);
 		PaginatedList<VideoGetViewModel> GetTrendingVideosInfo(int page = 1, int pageSize = 8);
 		PaginatedList<VideoGetViewModel> GetLastestVideosInfo(int page = 1, int pageSize = 8);
-	}
+		VideoDetailsViewModel GetVideoDetails(string videoId, string userId);
+    }
 }
