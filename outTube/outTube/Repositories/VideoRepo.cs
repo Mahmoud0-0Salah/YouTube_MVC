@@ -10,34 +10,65 @@ namespace ourTube.Repositories
 {
 	public class VideoRepo : Repository<Video>, IVideoRepo
 	{
-		private readonly ApplicationDbContext _context;
+		//private readonly ApplicationDbContext _context;
 		public VideoRepo(ApplicationDbContext context) : base(context)
 		{
-			_context = context;
+			//_context = context;
 		}
-
+		private static VideoGetViewModel GetVideoGetViewModel(Video video)
+		{
+			return new VideoGetViewModel
+			{
+				Id = video.VideoId,
+				Title = video.Title,
+				Channel = video.User.UserName,
+				Duration = video.Duration.ToString(@"hh\:mm\:ss"),
+				Time = video.CreatedAt.ToString("MMM dd, yyyy"),
+				Thumb = video.ThumbnailUrl,
+				Avatar = video.User.ImageUrl,
+				VideoUrl = video.VideoUrl,
+				Views = video.Views.Count
+			};		
+		}
 		public PaginatedList<VideoGetViewModel> GetVideosInfo(int page = 1, int pageSize = 8)
 		{
-			List<VideoGetViewModel> items = _context.Videos
+			List<VideoGetViewModel> items = GetByCondition(v=>v.Visible)
 			   .Include(v => v.User)
 			   .Include(v => v.Views)
-			   .Select(v => new VideoGetViewModel
-			   {
-				   Id = v.VideoId,	
-                   Views = v.Views.Count,
-				   Title = v.Title,
-				   Channel = v.User.UserName,
-				   Duration = v.Duration.ToString(@"hh\:mm\:ss"),
-				   Time = v.CreatedAt.ToString("MMM dd, yyyy"),
-				   Thumb = v.ThumbnailUrl,
-				   Avatar = v.User.ImageUrl,
-				   VideoUrl = v.VideoUrl
-			   })
+			   .Select(v => GetVideoGetViewModel(v))
 			   .Skip((page - 1) * pageSize)
 			   .Take(pageSize)
 			   .ToList();
 
-			return new PaginatedList<VideoGetViewModel>(items, _context.Videos.Count(), page, pageSize);
+			return new PaginatedList<VideoGetViewModel>(items, GetByCondition(v => v.Visible).Count(), page, pageSize);
+		}
+
+		public PaginatedList<VideoGetViewModel> GetTrendingVideosInfo(int page = 1, int pageSize = 8)
+		{
+			List<VideoGetViewModel> items = GetByCondition(v => v.Visible)
+			   .Include(v => v.User)
+			   .Include(v => v.Views)
+			   .OrderByDescending(v => v.Views.Count)
+			   .Select(v => GetVideoGetViewModel(v))
+			   .Skip((page - 1) * pageSize)
+			   .Take(pageSize)
+			   .ToList();
+
+			return new PaginatedList<VideoGetViewModel>(items, GetByCondition(v => v.Visible).Count(), page, pageSize);
+		}
+
+		public PaginatedList<VideoGetViewModel> GetLastestVideosInfo(int page = 1, int pageSize = 8)
+		{
+			List<VideoGetViewModel> items = GetByCondition(v => v.Visible)
+			   .Include(v => v.User)
+			   .Include(v => v.Views)
+			   .OrderByDescending(v => v.CreatedAt)
+			   .Select(v => GetVideoGetViewModel(v))
+			   .Skip((page - 1) * pageSize)
+			   .Take(pageSize)
+			   .ToList();
+
+			return new PaginatedList<VideoGetViewModel>(items, GetByCondition(v => v.Visible).Count(), page, pageSize);
 		}
 	}
 }

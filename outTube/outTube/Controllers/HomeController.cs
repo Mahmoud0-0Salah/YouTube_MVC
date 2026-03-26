@@ -28,6 +28,31 @@ namespace outTube.Controllers
 		}
 
 
+		public IActionResult Trending(int page = 1)
+		{
+			var model = _videoRepo.GetTrendingVideosInfo(page);
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+			{
+				return PartialView("_VideoCards", model);
+			}
+
+			return View("Index", model);
+		}
+
+
+		public IActionResult Lastest(int page = 1)
+		{
+			var model = _videoRepo.GetLastestVideosInfo(page);
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+			{
+				return PartialView("_VideoCards", model);
+			}
+
+			return View("Index", model);
+		}
+
 		public IActionResult Privacy()
         {
             return View();
