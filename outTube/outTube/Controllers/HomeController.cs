@@ -24,7 +24,7 @@ namespace outTube.Controllers
 				return PartialView("_VideoCards", model);
 			}
 
-			return View(model);
+			return View("VideosGrid", model);
 		}
 
 
@@ -37,7 +37,7 @@ namespace outTube.Controllers
 				return PartialView("_VideoCards", model);
 			}
 
-			return View("Index", model);
+			return View("VideosGrid", model);
 		}
 
 
@@ -50,7 +50,7 @@ namespace outTube.Controllers
 				return PartialView("_VideoCards", model);
 			}
 
-			return View("Index", model);
+			return View("VideosGrid", model);
 		}
 
 		public IActionResult Privacy()
