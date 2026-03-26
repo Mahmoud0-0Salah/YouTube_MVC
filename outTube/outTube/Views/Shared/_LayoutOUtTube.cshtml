@@ -376,10 +376,10 @@
             
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Explore</h3>
-                <a href="#" class="sb-link">
+                <a asp-controller="Home" asp-action="Trending" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Trending" ? "active" : "")">
                     <span class="material-symbols-outlined">local_fire_department</span>Trending
                 </a>
-                <a href="#" class="sb-link">
+                <a asp-controller="Home" asp-action="Lastest" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Lastest" ? "active" : "")">
                     <span class="material-symbols-outlined">schedule</span>Lastest
                 </a>
                 <!-- <a href="#" class="sb-link">

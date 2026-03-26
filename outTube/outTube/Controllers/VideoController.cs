@@ -32,7 +32,7 @@ namespace OurTube.Controllers
 
         public IActionResult Index()
         {
-            List<Video> videos = videoRepository.GetAll();
+            List<Video> videos = videoRepository.GetAll().ToList();
             return View(videos);
         }
 
@@ -108,6 +108,18 @@ namespace OurTube.Controllers
             video.Visible = model.Visible;
             video.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             videoRepository.Create(video);
+            videoRepository.Save();
+            return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Delete(string id)
+        {
+            Video video = videoRepository.GetByCondition(v => v.VideoId == id).FirstOrDefault();
+            if (video == null)
+            {
+                return NotFound();
+            }
+            videoRepository.Delete(video);
             videoRepository.Save();
             return RedirectToAction("Index", "Home");
         }

@@ -86,13 +86,21 @@ namespace outTube.Controllers
                     var token = await _tokenService.CreateToken(user);
                     
                     // Store token in cookie for MVC views to use (simplified for now)
-                    Response.Cookies.Append("X-Access-Token", token, new CookieOptions 
-                    { 
-                        HttpOnly = true, 
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.UtcNow.AddMinutes(1440)
-                    });
+                    };
+
+                    if (model.RememberMe)
+                    {
+                        // 1 day as currently in the code for remember me, maybe longer? 
+                        // I'll keep 1440 minutes but only if checked.
+                        cookieOptions.Expires = DateTime.UtcNow.AddMinutes(1440);
+                    }
+
+                    Response.Cookies.Append("X-Access-Token", token, cookieOptions);
 
                     return RedirectToAction("Index", "Home");
                 }
