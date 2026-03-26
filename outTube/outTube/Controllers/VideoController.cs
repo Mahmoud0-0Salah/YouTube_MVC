@@ -110,5 +110,17 @@ namespace OurTube.Controllers
             videoRepository.Save();
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult Delete(string id)
+        {
+            Video video = videoRepository.GetByCondition(v => v.VideoId == id).FirstOrDefault();
+            if (video == null)
+            {
+                return NotFound();
+            }
+            videoRepository.Delete(video);
+            videoRepository.Save();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
