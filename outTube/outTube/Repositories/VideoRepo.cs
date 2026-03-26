@@ -21,7 +21,8 @@ namespace ourTube.Repositories
 			{
 				Id = video.VideoId,
 				Title = video.Title,
-				Channel = video.User.UserName,
+        Channel = video.User.FirstName + " " + video.User.LastName,
+        Description = video.Description ?? string.Empty,
 				Duration = video.Duration.ToString(@"hh\:mm\:ss"),
 				Time = video.CreatedAt.ToString("MMM dd, yyyy"),
 				Thumb = video.ThumbnailUrl,

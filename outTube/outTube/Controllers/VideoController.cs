@@ -56,7 +56,8 @@ namespace OurTube.Controllers
             {
                 Id = video.VideoId,
                 Title = video.Title,
-                Channel = video.User.UserName,
+                Description = video.Description ?? string.Empty,
+                Channel = video.User != null ? $"{video.User.FirstName} {video.User.LastName}" : "Unknown User",
                 Views = watchVideoRepo.GetByCondition(wv => wv.VideoId == video.VideoId).Count(),
                 Time = video.CreatedAt.ToString("yyyy-MM-dd"),
                 Thumb = video.ThumbnailUrl,

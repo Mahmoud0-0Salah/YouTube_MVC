@@ -10,6 +10,7 @@
 		public string Thumb { get; set; } = string.Empty;
 		public string Avatar { get; set; } = string.Empty;
 		public string Duration { get; set; } = string.Empty;
+		public string Description { get; set; } = string.Empty;
 		public string VideoUrl { get; set; } = string.Empty;
 	}
 }
