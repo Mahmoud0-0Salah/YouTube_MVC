@@ -50,6 +50,7 @@ namespace ourTube.Services
             {
                 CommentId = comment.CommentId,
                 UserId = user.Id,
+                VideoId = model.VideoId,
                 Content = comment.Content,
                 UpdatedAt = comment.UpdatedAt ?? DateTime.Now,
                 UserName = user.FirstName + " " + user.LastName,

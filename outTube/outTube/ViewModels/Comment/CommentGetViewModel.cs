@@ -5,6 +5,7 @@ namespace ourTube.ViewModels.Comment
     public class CommentGetViewModel
     {
         public string CommentId { get; set; }
+        public string VideoId { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
         public string UserAvatar { get; set; }

@@ -432,36 +432,38 @@ video {
 
     hub.on("ReceiveComment", function (obj) {
         console.log(obj);
-        var div = document.createElement("div");
-        div.className = "comment-item";
-        div.style.display = "flex";
-        div.style.gap = "15px";
-        div.style.marginBottom = "24px";
-        div.id = `comment-${obj.commentId}`;
+        if(obj.videoId === '@Model.Id'){
+            var div = document.createElement("div");
+            div.className = "comment-item";
+            div.style.display = "flex";
+            div.style.gap = "15px";
+            div.style.marginBottom = "24px";
+            div.id = `comment-${obj.commentId}`;
 
-        let actionBtns = '';
-        if (currentUserId && obj.userId === currentUserId) {
-            actionBtns = `
-                <div class="comment-actions" style="display: flex; gap: 10px; margin-top: 8px;">
-                    <button class="btn-comment-action" onclick="editComment('${obj.commentId}')">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span> Edit
-                    </button>
-                    <button class="btn-comment-action" onclick="deleteComment('${obj.commentId}')">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span> Delete
-                    </button>
-                </div>
-            `;
+            let actionBtns = '';
+            if (currentUserId && obj.userId === currentUserId) {
+                actionBtns = `
+                    <div class="comment-actions" style="display: flex; gap: 10px; margin-top: 8px;">
+                        <button class="btn-comment-action" onclick="editComment('${obj.commentId}')">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">edit</span> Edit
+                        </button>
+                        <button class="btn-comment-action" onclick="deleteComment('${obj.commentId}')">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">delete</span> Delete
+                        </button>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <img src="${obj.userAvatar}" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
+                    <div style="flex-grow: 1;">
+                        <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">${obj.userName} <span class="time-ago-text" data-date="${obj.updatedAt}" style="color: var(--text-muted, #aaa); font-weight: 400; font-size: 12px; margin-left: 8px;">${timeAgo(obj.updatedAt)}</span></div>
+                        <div class="comment-content" style="color: var(--text-color, #eee); font-size: 14px; line-height: 1.4; margin-bottom: 8px;">${obj.content}</div>
+                        ${actionBtns}
+                    </div>`;
+            document.querySelector('.comments-list').appendChild(div);
+            document.querySelector('#commentsCount').innerText = parseInt(document.querySelector('#commentsCount').innerText) + 1 + " Comments";
         }
-
-        div.innerHTML = `
-            <img src="${obj.userAvatar}" alt="User" class="channel-avatar" style="width: 44px; height: 44px; border-radius: 50%;" />
-                <div style="flex-grow: 1;">
-                    <div style="color: var(--text-color, #fff); font-weight: 600; font-size: 14px; margin-bottom: 4px;">${obj.userName} <span class="time-ago-text" data-date="${obj.updatedAt}" style="color: var(--text-muted, #aaa); font-weight: 400; font-size: 12px; margin-left: 8px;">${timeAgo(obj.updatedAt)}</span></div>
-                    <div class="comment-content" style="color: var(--text-color, #eee); font-size: 14px; line-height: 1.4; margin-bottom: 8px;">${obj.content}</div>
-                    ${actionBtns}
-                </div>`;
-        document.querySelector('.comments-list').appendChild(div);
-        document.querySelector('#commentsCount').innerText = parseInt(document.querySelector('#commentsCount').innerText) + 1 + " Comments";
     });
 
     hub.on("ReceiveDeletedComment", function(commentId) {
