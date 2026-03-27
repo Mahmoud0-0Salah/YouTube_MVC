@@ -1,4 +1,4 @@
-namespace outTube.ViewModels;
+namespace ourTube.ViewModels.Report;
 
 using outTube.Models.Enums;
 using System.ComponentModel.DataAnnotations;

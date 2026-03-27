@@ -6,20 +6,21 @@ using ourTube.ViewModels.Video;
 using OurTube.Repositories;
 using outTube.Data;
 using outTube.Models;
+using outTube.Models.Enums;
 using outTube.Models.JunctionTables;
 
 namespace ourTube.Repositories
 {
 	public class VideoRepo : Repository<Video>, IVideoRepo
 	{
-        private readonly IWatchVideoRepo watchVideoRepo;
+		private readonly IWatchVideoRepo watchVideoRepo;
 
-        //private readonly ApplicationDbContext _context;
-        public VideoRepo(ApplicationDbContext context, IWatchVideoRepo watchVideoRepo) : base(context)
+		private readonly ApplicationDbContext _context;
+		public VideoRepo(ApplicationDbContext context, IWatchVideoRepo watchVideoRepo) : base(context)
 		{
-            this.watchVideoRepo = watchVideoRepo;
-            //_context = context;
-        }
+			this.watchVideoRepo = watchVideoRepo;
+			_context = context;
+		}
 		private static VideoGetViewModel GetVideoGetViewModel(Video video)
 		{
 			return new VideoGetViewModel
@@ -128,5 +129,32 @@ namespace ourTube.Repositories
                 }).ToList()
 			 };
         }
+
+		public bool CreateReport(ReportCreateViewModel model, string userId)
+		{
+			if (_context.UserCreateReports.Any(ur => ur.VideoId == model.VideoId && ur.UserId == userId))
+			{
+				return false;
+			}
+
+			Report report = new Report()
+			{
+				Reason = model.Reason,
+				Description = model.Description,
+				Status = ReportStatus.Pending,
+			};
+			_context.Reports.Add(report);
+
+			UserCreateReport userCreateReport = new UserCreateReport()
+			{
+				VideoId = model.VideoId,
+				ReportId = report.ReportId,
+				UserId = userId,
+				CreatedAt = DateTime.Now
+			};
+			_context.UserCreateReports.Add(userCreateReport);
+
+			return true;
+		}
     }
 }
