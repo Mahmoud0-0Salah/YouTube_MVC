@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using ourTube.Hubs;
 using ourTube.Repositories.Interfaces;
-using ourTube.ViewModels.Like;
 using outTube.Models;
 using outTube.Models.JunctionTables;
 
