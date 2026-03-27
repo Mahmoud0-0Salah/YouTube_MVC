@@ -350,7 +350,7 @@
                     <a href="#" class="sb-link">
                         <span class="material-symbols-outlined">smart_display</span>Your videos
                     </a>
-                    <a href="#" class="sb-link">
+                    <a asp-controller="Like" asp-action="GetLikedVideos"  class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "GetLikedVideos" ? "active" : "")">
                         <span class="material-symbols-outlined">thumb_up</span>Liked videos
                     </a>
                     <a asp-controller="Home" asp-action="Privacy" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Privacy" ? "active" : "")">

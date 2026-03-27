@@ -186,7 +186,7 @@
             document.getElementById("loading").style.display = "block";
             page++;
 
-            fetch(`/home/@(ViewContext.RouteData.Values["action"]?.ToString())?page=${page}`, {
+            fetch(`/@(ViewContext.RouteData.Values["controller"]?.ToString())/@(ViewContext.RouteData.Values["action"]?.ToString())?page=${page}`, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
                 }
