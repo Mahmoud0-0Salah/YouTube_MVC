@@ -1,6 +1,7 @@
-﻿using ourTube.Repositories.Interfaces;
+using ourTube.Repositories.Interfaces;
 using outTube.Models.JunctionTables;
 using System.Security.Claims;
+using System.Linq;
 
 namespace ourTube.Services
 {
