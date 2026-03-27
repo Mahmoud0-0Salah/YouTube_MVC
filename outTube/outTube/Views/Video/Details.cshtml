@@ -235,6 +235,43 @@ video {
     border-color: #ff0000;
     box-shadow: 0 0 8px rgba(255,0,0,0.3);
 }
+
+/* Smooth like count animation */
+#likeText {
+    display: inline-block;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#likeBtn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@@keyframes likeCountChange {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@@keyframes likeButtonPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 </style>
 
 <div class="details-container">
@@ -264,9 +301,9 @@ video {
         <div class="action-buttons">
             <!-- Grouped Like/Dislike -->
             <div class="action-group">
-                <button class="btn-action" id="likeBtn">
-                    <span class="material-symbols-outlined">thumb_up</span>
-                    <span id="likeText">Like</span>
+                <button class="btn-action"   style="@(Model.IsLiked ? "color: #ff0000;" : "")" id="likeBtn">
+                    <span  class="material-symbols-outlined">thumb_up</span>
+                    <span id="likeText" >@Model.Likes</span>
                 </button>
             </div>
 
@@ -505,22 +542,51 @@ video {
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen']
         });
 
-        const likeBtn = document.getElementById('likeBtn');
-        const likeText = document.getElementById('likeText');
-        let currentLikes = 0;
+   
+    });
+</script>
 
+ <script>
+          const likeBtn = document.getElementById('likeBtn');
+        const likeText = document.getElementById('likeText');
+        let currentLikes = @Model.IsLiked.ToString().ToLower();
+        currentLikes = !currentLikes;
         if (likeBtn && likeText) {
-            likeBtn.addEventListener('click', () => {
-                if (currentLikes === 0) {
-                    currentLikes = 1;
-                    likeText.innerText = currentLikes;
+            likeBtn.addEventListener('click', async () => {
+                likeBtn.style.animation = 'likeButtonPulse 0.3s ease';
+                setTimeout(() => {
+                    likeBtn.style.animation = '';
+                }, 300);
+
+                if (currentLikes) {
+                    currentLikes = false;
                     likeBtn.style.color = '#ff0000';
                 } else {
-                    currentLikes = 0;
-                    likeText.innerText = 'Like';
+                    currentLikes = true;
                     likeBtn.style.color = '';
                 }
+
+             const res = await fetch(`/Like/LikeToggle?videoId=@Model.Id`);
+    const data = await res.json();
+
+   // console.log(data.likes);
             });
+        }
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/likesHub") 
+        .build();
+
+    connection.start()
+        .then(() => console.log("Connected to LikeHub"))
+        .catch(err => console.error(err.toString()));
+    connection.on("ReceiveLike", function (videoId, likeCount) {
+        if (likeText && videoId === "@Model.Id") {
+            likeText.style.animation = 'none';
+            setTimeout(() => {
+                likeText.style.animation = 'likeCountChange 0.5s ease';
+                likeText.innerText = likeCount;
+            }, 10);
         }
     });
 </script>

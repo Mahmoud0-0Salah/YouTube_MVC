@@ -51,9 +51,10 @@ namespace outTube
             builder.Services.AddScoped<ICommentRepo, CommentRepo>();
             builder.Services.AddScoped<IUserCreateCommentRepo, UserCreateCommentRepo>();
             builder.Services.AddScoped<CommentService>();
-
-            // 2. Register Identity
-            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            builder.Services.AddScoped<ILikeRepo, LikeRepo>();
+            builder.Services.AddSignalR();
+			// 2. Register Identity
+			builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 6;
@@ -120,7 +121,8 @@ namespace outTube
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapHub<CommentsHub>("/commentsHub");
-            app.MapStaticAssets();
+            app.MapHub<LikeHub>("/likesHub");
+			app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")

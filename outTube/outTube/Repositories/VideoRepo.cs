@@ -111,7 +111,7 @@ namespace ourTube.Repositories
 				VideoUrl = video.VideoUrl,
 				Views = video.Views.Count,
 				Likes = video.Likes.Count,
-				IsLiked = video.Likes.Count > 0? true : false, 
+				IsLiked = video.Likes.Where(l=>l.UserId==userId).Count() > 0? true : false, 
 				NumOfComments = video.Comments.Count,
                 Comments = video.Comments.Select(c => new CommentGetViewModel
 				{
