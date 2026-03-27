@@ -50,7 +50,9 @@ namespace outTube
             builder.Services.AddScoped<IWatchVideoRepo, WatchVideoRepo>();
             builder.Services.AddScoped<ICommentRepo, CommentRepo>();
             builder.Services.AddScoped<IUserCreateCommentRepo, UserCreateCommentRepo>();
+            builder.Services.AddScoped<IUserSubscriberRepo, UserSubscriberRepo>();
             builder.Services.AddScoped<CommentService>();
+            builder.Services.AddScoped<UserSubscriberService>();
 
             // 2. Register Identity
             builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -120,6 +122,7 @@ namespace outTube
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapHub<CommentsHub>("/commentsHub");
+            app.MapHub<SubscribeHub>("/subscribeHub");
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",

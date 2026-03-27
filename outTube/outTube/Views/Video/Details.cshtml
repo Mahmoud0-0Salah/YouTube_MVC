@@ -120,6 +120,12 @@ video {
     border-color: #ff0000;
 }
 
+.btn-subscribe.subscribed {
+    background-color: var(--nav-bg, rgba(20, 20, 20, 0.6));
+    color: var(--text-color, #fff);
+    border: 1px solid var(--border-color, rgba(255,255,255,0.2));
+}
+
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -257,19 +263,35 @@ video {
             <img src="@Model.Avatar" alt="@Model.Channel" class="channel-avatar" onerror="this.src='/images/default-avatar.png'" />
             <div class="channel-info">
                 <p class="channel-name">@Model.Channel</p>
+                <p class="channel-subs" id="subscribersCount" style="margin: 0; font-size: 13px; color: var(--text-muted, #aaa);">@Model.NumOfSubscribers subscribers</p>
             </div>
-            <button class="btn-subscribe">Subscribe</button>
+            @if (User.Identity.IsAuthenticated)
+            {
+                var currentUser = await userManager.GetUserAsync(User);
+                if(currentUser.Id != Model.UserId)
+                {
+                    <button id="subscribeBtn" class="btn-subscribe @(Model.IsSubscribed ? "subscribed" : "")" onclick="toggleSubscribe('@Model.UserId')">
+                        @(Model.IsSubscribed ? "Subscribed" : "Subscribe")
+                    </button>
+                }
+            }
         </div>
 
         <div class="action-buttons">
             <!-- Grouped Like/Dislike -->
-            <div class="action-group">
-                <button class="btn-action" id="likeBtn">
-                    <span class="material-symbols-outlined">thumb_up</span>
-                    <span id="likeText">Like</span>
-                </button>
-            </div>
-
+            @if (User.Identity.IsAuthenticated)
+            {
+                var currentUser = await userManager.GetUserAsync(User);
+                if (currentUser.Id != Model.UserId)
+                {
+                    <div class="action-group">
+                        <button class="btn-action" id="likeBtn">
+                            <span class="material-symbols-outlined">thumb_up</span>
+                            <span id="likeText">Like</span>
+                        </button>
+                    </div>
+                }
+            }
             <!-- Individual Actions -->
             <button class="btn-action btn-single">
                 <span class="material-symbols-outlined">share</span>
@@ -378,8 +400,8 @@ video {
     }
 
     // Hub connection for real-time comments
-    var hub = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
-    hub.start().then(function () {
+    var commentHub = new signalR.HubConnectionBuilder().withUrl("/commentsHub").build();
+    commentHub.start().then(function () {
         console.log("Connection Success");
     });
     function sendCreatedComment() {
@@ -389,12 +411,12 @@ video {
             userid: null
         }
         document.getElementById("comment").value = ""
-        hub.invoke("Create", comment)
+        commentHub.invoke("Create", comment)
     }
 
     function deleteComment(commentId) {
         if(confirm("Are you sure you want to delete this comment?")) {
-            hub.invoke("Delete", commentId);
+            commentHub.invoke("Delete", commentId);
         }
     }
 
@@ -430,7 +452,7 @@ video {
         commentItem.querySelector('.comment-actions').style.display = 'flex';
     }
 
-    hub.on("ReceiveComment", function (obj) {
+    commentHub.on("ReceiveComment", function (obj) {
         console.log(obj);
         var div = document.createElement("div");
         div.className = "comment-item";
@@ -464,7 +486,7 @@ video {
         document.querySelector('#commentsCount').innerText = parseInt(document.querySelector('#commentsCount').innerText) + 1 + " Comments";
     });
 
-    hub.on("ReceiveDeletedComment", function(commentId) {
+    commentHub.on("ReceiveDeletedComment", function(commentId) {
         console.log(commentId);
         var commentElement = document.getElementById(`comment-${commentId}`);
         if(commentElement) {
@@ -473,7 +495,7 @@ video {
         }
     });
 
-    hub.on("ReceiveUpdatedComment", function(obj) {
+    commentHub.on("ReceiveUpdatedComment", function(obj) {
         var commentItem = document.getElementById("comment-" + obj.commentId);
         if(commentItem) {
             var contentDiv = commentItem.querySelector('.comment-content');
@@ -486,6 +508,63 @@ video {
             if(timeSpan) {
                 timeSpan.setAttribute('data-date', obj.updatedAt);
                 timeSpan.innerText = timeAgo(obj.updatedAt);
+            }
+        }
+    });
+
+    // Hub connection for subscribe
+    var subscribeHub = new signalR.HubConnectionBuilder().withUrl("/subscribeHub").build();
+    subscribeHub.start().then(function () {
+        console.log("Subscribe Connection Success");
+    });
+
+    var isSubscribed = @(Model.IsSubscribed.ToString().ToLower());
+
+    function toggleSubscribe(channelId) {
+        if(!currentUserId){
+            alert("Please log in to subscribe");
+            return;
+        }
+
+        if(!isSubscribed) {
+            subscribeHub.invoke("Subscribe", channelId);
+            isSubscribed = true;
+            document.getElementById("subscribeBtn").innerText = "Subscribed";
+            document.getElementById("subscribeBtn").classList.add("subscribed");
+        } else {
+            subscribeHub.invoke("Unsubscribe", channelId);
+            isSubscribed = false;
+            document.getElementById("subscribeBtn").innerText = "Subscribe";
+            document.getElementById("subscribeBtn").classList.remove("subscribed");
+        }
+    }
+
+    subscribeHub.on("ReceiveSubscription", function (channelId, subscriberId) {
+        console.log("User " + subscriberId + " subscribed to " + channelId);
+        if (channelId === '@Model.UserId') {
+            let countEl = document.getElementById("subscribersCount");
+            let count = parseInt(countEl.innerText) || 0;
+            countEl.innerText = (count + 1) + " subscribers";
+            if (subscriberId === currentUserId && !isSubscribed) {
+                isSubscribed = true;
+                let btn = document.getElementById("subscribeBtn");
+                btn.innerText = "Subscribed";
+                btn.classList.add("subscribed");
+            }
+        }
+    });
+
+    subscribeHub.on("ReceiveUnsubscription", function (channelId, subscriberId) {
+        console.log("User " + subscriberId + " unsubscribed from " + channelId);
+        if (channelId === '@Model.UserId') {
+            let countEl = document.getElementById("subscribersCount");
+            let count = parseInt(countEl.innerText) || 0;
+            if (count > 0) countEl.innerText = (count - 1) + " subscribers";
+            if (subscriberId === currentUserId && isSubscribed) {
+                isSubscribed = false;
+                let btn = document.getElementById("subscribeBtn");
+                btn.innerText = "Subscribe";
+                btn.classList.remove("subscribed");
             }
         }
     });
