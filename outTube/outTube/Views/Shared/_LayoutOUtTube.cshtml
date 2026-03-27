@@ -337,7 +337,7 @@
             @if (User.Identity.IsAuthenticated)
             {
                 <div class="sidebar-section">
-                    <a href="#" class="sb-link">
+                    <a asp-controller="Subscription" asp-action="GetSubscripedVideos"  class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "GetLikedVideos" ? "active" : "")">
                         <span class="material-symbols-outlined">subscriptions</span>Subscriptions
                     </a>
                 </div>
