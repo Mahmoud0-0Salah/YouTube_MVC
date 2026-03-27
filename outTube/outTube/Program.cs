@@ -52,6 +52,9 @@ namespace outTube
             builder.Services.AddScoped<IUserCreateCommentRepo, UserCreateCommentRepo>();
             builder.Services.AddScoped<IUserSubscriberRepo, UserSubscriberRepo>();
             builder.Services.AddScoped<CommentService>();
+            builder.Services.AddScoped<ILikeRepo, LikeRepo>();
+            builder.Services.AddSignalR();
+		
             builder.Services.AddScoped<UserSubscriberService>();
 
             // 2. Register Identity
@@ -122,6 +125,8 @@ namespace outTube
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapHub<CommentsHub>("/commentsHub");
+            app.MapHub<LikeHub>("/likesHub");
+	
             app.MapHub<SubscribeHub>("/subscribeHub");
             app.MapStaticAssets();
             app.MapControllerRoute(
