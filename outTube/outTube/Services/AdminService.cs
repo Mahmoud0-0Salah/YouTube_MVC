@@ -73,7 +73,10 @@ namespace outTube.Services
 
         public async Task<bool> ToggleVideoVisibilityAsync(string videoId)
         {
-            var video = await _context.Videos.FindAsync(videoId);
+            var video = await _context.Videos
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(v => v.VideoId == videoId);
+                
             if (video == null) return false;
 
             video.Visible = !video.Visible;

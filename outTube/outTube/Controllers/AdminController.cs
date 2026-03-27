@@ -48,6 +48,13 @@ namespace outTube.Controllers
         public async Task<IActionResult> ToggleVisibility(string videoId)
         {
             await _adminService.ToggleVideoVisibilityAsync(videoId);
+            
+            // Redirect back to referer if available, default to Videos
+            string referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
+            }
             return RedirectToAction(nameof(Videos));
         }
 
