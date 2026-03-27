@@ -9,6 +9,7 @@ using System.Security.Claims;
 using TagLib;
 using outTube.Models.JunctionTables;
 using ourTube.ViewModels.Video;
+using Microsoft.AspNetCore.Authorization;
 
 namespace OurTube.Controllers
 {
@@ -44,7 +45,7 @@ namespace OurTube.Controllers
             {
                 return NotFound();
             }
-            return View(video); 
+            return View(video);
         }
 
 
@@ -61,16 +62,16 @@ namespace OurTube.Controllers
             video.CreatedAt = DateTime.Now;
             string videoName = $"{video.VideoId}{Path.GetExtension(model.Source.FileName)}";
             string thumnailName = $"{video.VideoId}{Path.GetExtension(model.Thumbnail.FileName)}";
-            
+
             string videosDir = Path.Combine(webHost.WebRootPath, "videos");
             if (!Directory.Exists(videosDir)) Directory.CreateDirectory(videosDir);
-            
+
             string thumbDir = Path.Combine(webHost.WebRootPath, "images", "VideosThumnails");
             if (!Directory.Exists(thumbDir)) Directory.CreateDirectory(thumbDir);
 
             string videoPath = Path.Combine(videosDir, videoName);
             string thumbnailPath = Path.Combine(thumbDir, thumnailName);
-            
+
             using (var stream = new FileStream(videoPath, FileMode.Create))
             {
                 await model.Source.CopyToAsync(stream);
@@ -81,7 +82,7 @@ namespace OurTube.Controllers
             }
             video.Title = model.Title;
             video.Description = model.Description;
-            video.VideoUrl = $"/videos/{videoName}";    
+            video.VideoUrl = $"/videos/{videoName}";
             video.ThumbnailUrl = $"/images/VideosThumnails/{thumnailName}";
             video.Duration = TagLib.File.Create(videoPath).Properties.Duration;
             video.Visible = model.Visible;
@@ -101,6 +102,32 @@ namespace OurTube.Controllers
             videoRepository.Delete(video);
             videoRepository.Save();
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateReport([FromBody] ReportCreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid data provided." });
+            }
+
+            var user = await userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized(new { message = "You must be logged in to report a video." });
+
+            bool isCreated = videoRepository.CreateReport(model, user.Id);
+            if (!isCreated)
+            {
+                return BadRequest(new { message = "You have already reported this video." });
+            }
+
+            if(videoRepository.Save() > 0)
+            {
+                return Ok(new { message = "Report submitted successfully." });
+            }
+
+            return BadRequest(new { message = "Failed to submit report. Please try again." });
         }
     }
 }
