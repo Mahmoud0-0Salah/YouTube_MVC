@@ -44,5 +44,18 @@ namespace ourTube.Controllers
 
 			return Ok(new { likes = likeCount });
 		}
+
+		public IActionResult GetLikedVideos(int page = 1)
+		{
+			string userId = _userManager.GetUserId(User);
+			var model = _likeRepo.GetLikedVideosInfo(userId,page);
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+			{
+				return PartialView("_VideoCards", model);
+			}
+
+			return View("VideosGrid", model);
+		}
 	}
 }
