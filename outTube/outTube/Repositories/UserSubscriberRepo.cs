@@ -1,7 +1,8 @@
-﻿using ourTube.Repositories.Interfaces;
+using ourTube.Repositories.Interfaces;
 using OurTube.Repositories;
 using OurTube.Repositories.Interfaces.Common;
 using outTube.Data;
+using outTube.Models.JunctionTables;
 using System.Linq.Expressions;
 
 namespace ourTube.Repositories
