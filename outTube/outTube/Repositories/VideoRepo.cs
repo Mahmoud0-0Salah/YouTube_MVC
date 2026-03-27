@@ -120,8 +120,8 @@ namespace ourTube.Repositories
 				Comments = video.Comments.Select(c => new CommentGetViewModel
 				{
 					CommentId = c.CommentId,
-					UserId = c.UserId,
-					UserName = c.User.FirstName + " " + c.User.LastName,
+					VideoId = c.VideoId,
+                    UserName = c.User.FirstName + " " + c.User.LastName,
 					Content = c.Comment.Content,
 					UserAvatar = c.User.ImageUrl,
 					UpdatedAt = c.Comment.UpdatedAt ?? DateTime.Now
