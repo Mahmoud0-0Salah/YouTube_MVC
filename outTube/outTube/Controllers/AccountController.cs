@@ -67,6 +67,12 @@ namespace outTube.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Banned()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -77,6 +83,13 @@ namespace outTube.Controllers
                 {
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
+                }
+
+                // Explicit check for ban before password verification
+                var isBanned = await _userManager.IsLockedOutAsync(user);
+                if (isBanned)
+                {
+                    return RedirectToAction("Banned");
                 }
 
                 var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
@@ -95,8 +108,6 @@ namespace outTube.Controllers
 
                     if (model.RememberMe)
                     {
-                        // 1 day as currently in the code for remember me, maybe longer? 
-                        // I'll keep 1440 minutes but only if checked.
                         cookieOptions.Expires = DateTime.UtcNow.AddMinutes(1440);
                     }
 

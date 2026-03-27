@@ -13,13 +13,14 @@ using OurTube.Repositories.Interfaces.Common;
 using outTube.Data;
 using outTube.Models;
 using outTube.Services;
+using outTube.Middlewares;
 using System.Text;
 
 namespace outTube
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ namespace outTube
             builder.Services.AddScoped<ILikeRepo, LikeRepo>();
             builder.Services.AddSignalR();
 		
+            builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<UserSubscriberService>();
 
             // 2. Register Identity
@@ -70,6 +72,12 @@ namespace outTube
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(365 * 100);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+            });
             // 3. Register JWT Authentication
             var jwtSettings = builder.Configuration.GetSection("Jwt");
             var keyStr = jwtSettings["Key"] ?? "A_Very_Long_And_Extra_Secret_OurTube_Project_Key_2025_Its_Finally_Long_Enough_Now!";
@@ -123,6 +131,10 @@ namespace outTube
 
             // 4. Use Authentication & Authorization
             app.UseAuthentication();
+            
+            // Add custom ban check middleware after authentication
+            app.UseMiddleware<BanCheckMiddleware>();
+
             app.UseAuthorization();
             app.MapHub<CommentsHub>("/commentsHub");
             app.MapHub<LikeHub>("/likesHub");
@@ -133,6 +145,12 @@ namespace outTube
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await DataSeeder.SeedRolesAndAdminAsync(services);
+            }
 
             app.Run();
         }
