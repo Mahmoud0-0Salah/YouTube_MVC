@@ -81,6 +81,7 @@ namespace ourTube.Repositories
         {
             Video video = GetByCondition(v => v.VideoId == videoId)
 				.Include(v => v.User)
+					.ThenInclude(u => u.Subscribers)
 				.Include(v => v.Views)
 				.Include(v => v.Likes)
 				.Include(v => v.Comments)
@@ -103,7 +104,8 @@ namespace ourTube.Repositories
 				Id = video.VideoId,
 				Title = video.Title,
 				Channel = video.User.FirstName + " " + video.User.LastName,
-				Description = video.Description ?? string.Empty,
+				UserId = video.UserId,
+                Description = video.Description ?? string.Empty,
 				Duration = video.Duration.ToString(@"hh\:mm\:ss"),
 				Time = video.CreatedAt.ToString("MMM dd, yyyy"),
 				Thumb = video.ThumbnailUrl,
@@ -113,7 +115,9 @@ namespace ourTube.Repositories
 				Likes = video.Likes.Count,
 				IsLiked = video.Likes.Where(l=>l.UserId==userId).Count() > 0? true : false, 
 				NumOfComments = video.Comments.Count,
-                Comments = video.Comments.Select(c => new CommentGetViewModel
+				NumOfSubscribers = video.User.Subscribers != null ? video.User.Subscribers.Count : 0,
+				IsSubscribed = video.User.Subscribers != null && userId != null && video.User.Subscribers.Any(s => s.SubscriberId == userId),
+				Comments = video.Comments.Select(c => new CommentGetViewModel
 				{
 					CommentId = c.CommentId,
 					VideoId = c.VideoId,
