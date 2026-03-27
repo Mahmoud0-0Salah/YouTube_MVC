@@ -2,6 +2,8 @@ using outTube.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+namespace outTube.Models.JunctionTables;
+
 public class BannedUser : IValidatableObject
 {
     [Key]
@@ -21,6 +23,9 @@ public class BannedUser : IValidatableObject
     public User Admin { get; set; }
 
     public DateTime BannedAt { get; set; } = DateTime.UtcNow;
+
+    [MaxLength(255)]
+    public string? Reason { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
