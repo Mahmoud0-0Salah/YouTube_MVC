@@ -113,7 +113,7 @@ namespace ourTube.Repositories
 				VideoUrl = video.VideoUrl,
 				Views = video.Views.Count,
 				Likes = video.Likes.Count,
-				IsLiked = video.Likes.Where(l=>l.UserId==userId).Count() > 0? true : false, 
+				IsLiked = video.Likes.Where(l=>l.UserId==userId && l.VideoId == videoId).Count() > 0? true : false, 
 				NumOfComments = video.Comments.Count,
 				NumOfSubscribers = video.User.Subscribers != null ? video.User.Subscribers.Count : 0,
 				IsSubscribed = video.User.Subscribers != null && userId != null && video.User.Subscribers.Any(s => s.SubscriberId == userId),
