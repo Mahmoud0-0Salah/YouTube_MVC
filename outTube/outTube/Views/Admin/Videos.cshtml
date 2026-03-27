@@ -1,0 +1,116 @@
+@model IEnumerable<outTube.Models.Video>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Platform Content";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Platform content</h2>
+    <div class="topbar-search" style="max-width: 400px;">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" id="contentSearch" placeholder="Search videos or uploaders..." onkeyup="filterContent()" />
+    </div>
+</div>
+
+<div class="studio-card">
+    <div class="table-responsive">
+        <table class="studio-table" id="contentTable">
+            <thead>
+                <tr>
+                    <th style="width: 45%">Video</th>
+                    <th>Visibility</th>
+                    <th>Date</th>
+                    <th>Views</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var video in Model)
+                {
+                    <tr class="content-row">
+                        <td>
+                            <div class="d-flex gap-3">
+                                <div class="position-relative" style="min-width: 120px;">
+                                    <a asp-controller="Video" asp-action="Details" asp-route-id="@video.VideoId" target="_blank" class="text-decoration-none">
+                                        <img src="@video.ThumbnailUrl" width="120" height="68" class="rounded" style="object-fit: cover; background: #000;" />
+                                        <div class="position-absolute bottom-0 end-0 m-1 px-1 bg-black bg-opacity-75 rounded x-small" style="font-size: 10px;">@video.Duration.ToString(@"mm\:ss")</div>
+                                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 hover-opacity-100 bg-black bg-opacity-40 rounded transition-all">
+                                            <span class="material-symbols-outlined text-white" style="font-size: 32px;">play_circle</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a asp-controller="Video" asp-action="Details" asp-route-id="@video.VideoId" target="_blank" class="text-decoration-none text-white fw-medium text-truncate search-target" style="max-width: 300px;">
+                                        @video.Title
+                                    </a>
+                                    <span class="text-secondary small mt-1">@@@video.User.UserName</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (video.Visible)
+                            {
+                                <div class="d-flex align-items-center gap-2 text-success">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
+                                    <span style="font-size: 13px;">Public</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center gap-2 text-secondary">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">visibility_off</span>
+                                    <span style="font-size: 13px;">Hidden</span>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="small">@video.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                <span class="text-secondary" style="font-size: 11px;">Published</span>
+                            </div>
+                        </td>
+                        <td class="small">@video.Views.Count.ToString("N0")</td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2 text-nowrap">
+                                <a asp-controller="Video" asp-action="Details" asp-route-id="@video.VideoId" target="_blank" class="btn-studio-outline py-1 px-3" style="font-size: 12px; border-color: var(--accent-blue);">
+                                    Watch
+                                </a>
+                                <form asp-action="ToggleVisibility" method="post" style="display:inline">
+                                    <input type="hidden" name="videoId" value="@video.VideoId" />
+                                    <button type="submit" class="btn-studio-outline py-1 px-3" style="font-size: 12px; color: var(--text-secondary)">
+                                        @(video.Visible ? "Hide" : "Show")
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterContent() {
+        const query = document.getElementById('contentSearch').value.toLowerCase();
+        const rows = document.querySelectorAll('.content-row');
+        
+        rows.forEach(row => {
+            const text = row.querySelector('.search-target').textContent.toLowerCase();
+            const uploader = row.querySelector('.text-secondary').textContent.toLowerCase();
+            if (text.includes(query) || uploader.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+<style>
+    .x-small { font-size: 10px; font-weight: 700; }
+    .transition-all { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .opacity-0 { opacity: 0; }
+    .hover-opacity-100:hover { opacity: 1 !important; }
+    tr:hover .hover-opacity-100 { opacity: 1; }
+</style>
