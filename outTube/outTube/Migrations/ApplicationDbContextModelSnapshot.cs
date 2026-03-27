@@ -22,37 +22,6 @@ namespace ourTube.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BannedUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdminId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("BannedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
-
-                    b.HasIndex("UserId", "AdminId")
-                        .IsUnique();
-
-                    b.ToTable("BannedUsers");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -186,58 +155,6 @@ namespace ourTube.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ReviewReport", b =>
-                {
-                    b.Property<string>("ReportId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AdminId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("ReviewedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ReportId");
-
-                    b.HasIndex("AdminId");
-
-                    b.ToTable("ReviewReports");
-                });
-
-            modelBuilder.Entity("UserSubscriber", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("SubscribedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubscriberId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriberId");
-
-                    b.HasIndex("UserId", "SubscriberId")
-                        .IsUnique();
-
-                    b.ToTable("UserSubscribers");
-                });
-
             modelBuilder.Entity("outTube.Models.Comment", b =>
                 {
                     b.Property<string>("CommentId")
@@ -255,6 +172,41 @@ namespace ourTube.Migrations
                     b.HasKey("CommentId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("outTube.Models.JunctionTables.BannedUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("BannedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("UserId", "AdminId")
+                        .IsUnique();
+
+                    b.ToTable("BannedUsers");
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.LikeVideo", b =>
@@ -286,6 +238,27 @@ namespace ourTube.Migrations
                         .IsUnique();
 
                     b.ToTable("LikeVideos");
+                });
+
+            modelBuilder.Entity("outTube.Models.JunctionTables.ReviewReport", b =>
+                {
+                    b.Property<string>("ReportId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AdminId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("AdminId");
+
+                    b.ToTable("ReviewReports");
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.UserCreateComment", b =>
@@ -342,6 +315,37 @@ namespace ourTube.Migrations
                     b.HasIndex("VideoId");
 
                     b.ToTable("UserCreateReports");
+                });
+
+            modelBuilder.Entity("outTube.Models.JunctionTables.UserSubscriber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("SubscribedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SubscriberId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriberId");
+
+                    b.HasIndex("UserId", "SubscriberId")
+                        .IsUnique();
+
+                    b.ToTable("UserSubscribers");
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.WatchVideo", b =>
@@ -530,25 +534,6 @@ namespace ourTube.Migrations
                     b.ToTable("Videos");
                 });
 
-            modelBuilder.Entity("BannedUser", b =>
-                {
-                    b.HasOne("outTube.Models.User", "Admin")
-                        .WithMany("BansIssued")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("outTube.Models.User", "User")
-                        .WithMany("BansReceived")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -600,40 +585,21 @@ namespace ourTube.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ReviewReport", b =>
+            modelBuilder.Entity("outTube.Models.JunctionTables.BannedUser", b =>
                 {
                     b.HasOne("outTube.Models.User", "Admin")
-                        .WithMany("ReviewedReports")
+                        .WithMany("BansIssued")
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("outTube.Models.Report", "Report")
-                        .WithOne("ReviewReport")
-                        .HasForeignKey("ReviewReport", "ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-
-                    b.Navigation("Report");
-                });
-
-            modelBuilder.Entity("UserSubscriber", b =>
-                {
-                    b.HasOne("outTube.Models.User", "Subscriber")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("SubscriberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("outTube.Models.User", "User")
-                        .WithMany("Subscribers")
+                        .WithMany("BansReceived")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Subscriber");
+                    b.Navigation("Admin");
 
                     b.Navigation("User");
                 });
@@ -655,6 +621,25 @@ namespace ourTube.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Video");
+                });
+
+            modelBuilder.Entity("outTube.Models.JunctionTables.ReviewReport", b =>
+                {
+                    b.HasOne("outTube.Models.User", "Admin")
+                        .WithMany("ReviewedReports")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("outTube.Models.Report", "Report")
+                        .WithOne("ReviewReport")
+                        .HasForeignKey("outTube.Models.JunctionTables.ReviewReport", "ReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("Report");
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.UserCreateComment", b =>
@@ -709,6 +694,25 @@ namespace ourTube.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Video");
+                });
+
+            modelBuilder.Entity("outTube.Models.JunctionTables.UserSubscriber", b =>
+                {
+                    b.HasOne("outTube.Models.User", "Subscriber")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("SubscriberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("outTube.Models.User", "User")
+                        .WithMany("Subscribers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Subscriber");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.WatchVideo", b =>

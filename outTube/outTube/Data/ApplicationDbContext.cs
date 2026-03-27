@@ -25,6 +25,9 @@ public class ApplicationDbContext : IdentityDbContext<User>
     {
         base.OnModelCreating(builder);
 
+        // ============ GLOBAL QUERY FILTERS ============
+        builder.Entity<Video>().HasQueryFilter(v => v.Visible && !v.User.BansReceived.Any());
+
         // ============ UNIQUE INDEXES FOR JUNCTION TABLES ============
 
         // LikeVideo: (VideoId, UserId) should be unique

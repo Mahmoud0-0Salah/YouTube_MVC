@@ -1,6 +1,5 @@
-﻿using ourTube.ViewModels;
-using ourTube.ViewModels.Video;
 using OurTube.Repositories.Interfaces.Common;
+using outTube.Models.JunctionTables;
 
 namespace ourTube.Repositories.Interfaces
 {

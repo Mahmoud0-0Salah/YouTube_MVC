@@ -368,11 +368,14 @@
                 </div>
             }
             
-            <div class="sidebar-section">
-                <a asp-controller="Debug" asp-action="Accounts" class="sb-link">
-                    <span class="material-symbols-outlined">bug_report</span>Debug Accounts
-                </a>
-            </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="sidebar-section">
+                    <a asp-controller="Admin" asp-action="Index" class="sb-link">
+                        <span class="material-symbols-outlined">admin_panel_settings</span>Admin Dashboard
+                    </a>
+                </div>
+            }
             
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Explore</h3>

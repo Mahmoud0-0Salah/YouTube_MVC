@@ -1,0 +1,124 @@
+@model IEnumerable<outTube.Models.Report>
+@using outTube.Models.Enums
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Safety & Copyright";
+    var currentStatus = ViewBag.CurrentStatus as ReportStatus? ?? ReportStatus.Pending;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Review Reports</h2>
+    <div class="d-flex gap-3">
+        <a asp-action="Reports" asp-route-status="@ReportStatus.Pending" class="nav-item @(currentStatus == ReportStatus.Pending ? "active text-danger" : "")" style="padding: 8px 16px; border: none; font-weight: 500;">
+            Pending
+        </a>
+        <a asp-action="Reports" asp-route-status="@ReportStatus.Reviewed" class="nav-item @(currentStatus == ReportStatus.Reviewed ? "active text-success" : "")" style="padding: 8px 16px; border: none; font-weight: 500;">
+            Resolved
+        </a>
+        <a asp-action="Reports" asp-route-status="@ReportStatus.Dismissed" class="nav-item @(currentStatus == ReportStatus.Dismissed ? "active text-secondary" : "")" style="padding: 8px 16px; border: none; font-weight: 500;">
+            Dismissed
+        </a>
+    </div>
+</div>
+
+<div class="studio-card">
+    <div class="table-responsive">
+        <table class="studio-table">
+            <thead>
+                <tr>
+                    <th style="width: 35%">Flagged Content</th>
+                    <th style="width: 25%">Violation</th>
+                    <th>Reported</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex gap-3">
+                                <div class="position-relative" style="min-width: 100px;">
+                                    <a asp-controller="Video" asp-action="Details" asp-route-id="@report.UserCreateReport.Video.VideoId" target="_blank" class="text-decoration-none">
+                                        <img src="@report.UserCreateReport.Video.ThumbnailUrl" width="100" height="56" class="rounded" style="object-fit: cover; background: #000;" />
+                                        <div class="position-absolute bottom-0 end-0 m-1 px-1 bg-black bg-opacity-75 rounded" style="font-size: 8px; font-weight: bold;">WATCH</div>
+                                    </a>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-medium text-truncate" style="max-width: 240px;">@report.UserCreateReport.Video.Title</span>
+                                    <span class="text-secondary mt-1" style="font-size: 11px;">
+                                        Publisher: <span class="text-info">@@@report.UserCreateReport.Video.User.UserName</span>
+                                    </span>
+                                    <span class="text-secondary" style="font-size: 11px;">
+                                        By: @@@report.UserCreateReport.User.UserName
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-medium text-danger" style="font-size: 13px;">@report.Reason</span>
+                                <span class="text-secondary mt-1" style="font-size: 11px; max-width: 220px;">@report.Description</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="small">@report.UserCreateReport.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                <span class="text-secondary" style="font-size: 11px;">@report.UserCreateReport.CreatedAt.ToString("hh:mm tt")</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (report.Status == ReportStatus.Pending)
+                            {
+                                <span class="status-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" style="font-size: 11px;">Pending</span>
+                            }
+                            else if (report.Status == ReportStatus.Reviewed)
+                            {
+                                <span class="status-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25" style="font-size: 11px;">Resolved</span>
+                            }
+                            else
+                            {
+                                <span class="status-pill bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25" style="font-size: 11px;">Dismissed</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            @if (report.Status == ReportStatus.Pending)
+                            {
+                                <div class="d-flex justify-content-end gap-2">
+                                    <form asp-action="ToggleVisibility" method="post" style="display:inline">
+                                        <input type="hidden" name="videoId" value="@report.UserCreateReport.Video.VideoId" />
+                                        <button type="submit" class="btn-studio-outline py-1 px-2" style="font-size: 11px; color: var(--text-secondary)">
+                                            @(report.UserCreateReport.Video.Visible ? "Hide Video" : "Show Video")
+                                        </button>
+                                    </form>
+                                    <form asp-action="ReviewReport" method="post" style="display:inline">
+                                        <input type="hidden" name="reportId" value="@report.ReportId" />
+                                        <input type="hidden" name="status" value="@ReportStatus.Reviewed" />
+                                        <button type="submit" class="btn-studio-outline py-1 px-2" style="font-size: 11px;">Resolve</button>
+                                    </form>
+                                    <form asp-action="ReviewReport" method="post" style="display:inline">
+                                        <input type="hidden" name="reportId" value="@report.ReportId" />
+                                        <input type="hidden" name="status" value="@ReportStatus.Dismissed" />
+                                        <button type="submit" class="btn-studio-outline py-1 px-2" style="font-size: 11px; color: var(--text-secondary)">Dismiss</button>
+                                    </form>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="d-flex flex-column align-items-center opacity-50">
+                                <span class="material-symbols-outlined" style="font-size: 48px;">check_circle</span>
+                                <span class="mt-2 fw-medium">No @currentStatus.ToString().ToLower() reports found.</span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

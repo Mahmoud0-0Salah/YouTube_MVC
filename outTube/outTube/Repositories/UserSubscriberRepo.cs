@@ -1,4 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using ourTube.Repositories.Interfaces;
+using OurTube.Repositories;
+using OurTube.Repositories.Interfaces.Common;
+using outTube.Data;
+using outTube.Models.JunctionTables;
+using Microsoft.EntityFrameworkCore;
 using ourTube.Repositories.Interfaces;
 using ourTube.ViewModels;
 using ourTube.ViewModels.Video;
