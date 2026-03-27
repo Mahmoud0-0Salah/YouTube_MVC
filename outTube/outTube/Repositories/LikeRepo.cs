@@ -34,8 +34,8 @@ namespace ourTube.Repositories.Interfaces
 		public PaginatedList<VideoGetViewModel> GetLikedVideosInfo(string useerId, int page = 1, int pageSize = 8)
 		{
 			List<VideoGetViewModel> items = GetByCondition(l=>l.UserId == useerId)
-			   .Include(l=>l.Video)
-			   .ThenInclude(v=>v.User)
+					  .Include(l => l.Video.Views)
+			   .ThenInclude(v => v.User)
 			   .Where(Video => Video.Video.Visible)
 			   .Select(l => GetVideoGetViewModel(l.Video))
 			   .Skip((page - 1) * pageSize)
