@@ -3,176 +3,343 @@
     ViewData["Title"] = "Sign In - OurTube";
 }
 
-<div class="auth-container">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h2>Welcome Back</h2>
-            <p>Sign in to continue your journey</p>
+<div class="auth-wrapper">
+    <div class="auth-card-glass">
+        <div class="auth-brand">
+            <span class="material-symbols-outlined">play_circle</span>
+            <h1>OurTube</h1>
         </div>
         
-        <form asp-action="Login" method="post" class="auth-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Continue your creative journey</p>
+        </div>
+        
+        <form asp-action="Login" method="post" class="auth-form-modern">
+            <div asp-validation-summary="All" class="text-danger mb-3" style="font-size: 13px; list-style: none; padding: 0;"></div>
             
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-input" placeholder="Email Address" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Any()))
+            {
+                <div class="auth-alert mb-4">
+                    <span class="material-symbols-outlined">warning</span>
+                    <div>
+                        @foreach (var modelState in ViewData.ModelState.Values)
+                        {
+                            foreach (var error in modelState.Errors)
+                            {
+                                <p class="m-0">@error.ErrorMessage</p>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            
+            <div class="form-floating-custom mb-3">
+                <input asp-for="Email" class="input-modern" placeholder=" " autofocus />
+                <label asp-for="Email">Email Address</label>
+                <span asp-validation-for="Email" class="error-text"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-input" placeholder="Password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <div class="form-floating-custom mb-3">
+                <input asp-for="Password" type="password" class="input-modern" placeholder=" " />
+                <label asp-for="Password">Password</label>
+                <span asp-validation-for="Password" class="error-text"></span>
             </div>
 
-            <div class="form-group remember-me">
-                <label asp-for="RememberMe" class="checkbox-label">
-                    <input asp-for="RememberMe" class="checkbox-input" />
-                    <span>Remember Me</span>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <label class="checkbox-container">
+                    <input asp-for="RememberMe" />
+                    <span class="checkmark"></span>
+                    <span class="label-text">Remember me</span>
                 </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
             </div>
 
-            <button type="submit" class="btn btn-primary auth-submit">Sign In</button>
+            <button type="submit" class="btn-auth-primary">
+                <span>Sign In</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
         </form>
 
-        <div class="auth-footer">
-            <p>Don't have an account? <a asp-action="Register">Join Now</a></p>
+        <div class="auth-divider">
+            <span>OR</span>
+        </div>
+
+        <div class="auth-footer-text">
+            Don't have an account? <a asp-action="Register">Create Account</a>
         </div>
     </div>
 </div>
 
 <style>
-/* Modern Auth Styles */
-.auth-container {
+:root {
+    --auth-bg: #0f0f0f;
+    --card-bg: rgba(30, 30, 30, 0.7);
+    --accent-red: #ff0000;
+    --accent-blue: #3ea6ff;
+    --text-main: #ffffff;
+    --text-dim: #aaaaaa;
+    --input-bg: rgba(0, 0, 0, 0.3);
+}
+
+.auth-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
-    padding: 2rem;
+    min-height: calc(100vh - 120px);
+    background: radial-gradient(circle at center, #1a1a1a 0%, #0f0f0f 100%);
 }
 
-.auth-card {
-    background: var(--card-bg, #1a1a1a);
-    color: #fff;
-    padding: 3rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+.auth-card-glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
     width: 100%;
-    max-width: 440px;
-    border: 1px solid rgba(255,255,255,0.1);
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.auth-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.auth-brand .material-symbols-outlined {
+    font-size: 48px;
+    color: var(--accent-red);
+}
+
+.auth-brand h1 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0;
 }
 
 .auth-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 32px;
 }
 
 .auth-header h2 {
-    font-size: 2.25rem;
+    font-size: 28px;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(90deg, #ff0000, #ff5555);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
 }
 
 .auth-header p {
-    color: #999;
-    font-size: 1.1rem;
+    color: var(--text-dim);
+    font-size: 14px;
 }
 
-.auth-form .form-group {
-    margin-bottom: 1.5rem;
+/* Form Styles */
+.form-floating-custom {
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-.auth-form label {
-    display: block;
-    margin-bottom: 0.6rem;
-    font-size: 0.95rem;
-    color: #ccc;
-}
-
-.form-input {
-    width: 100%;
-    padding: 0.9rem 1.1rem;
-    background: #000;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 0.75rem;
-    color: #fff;
+.input-modern {
+    background: var(--input-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px 16px 8px 16px;
+    color: white;
+    font-size: 15px;
     outline: none;
-    transition: all 0.3s;
-    font-size: 1rem;
+    transition: all 0.2s;
 }
 
-.form-input:focus {
-    border-color: #ff0000;
-    box-shadow: 0 0 0 3px rgba(255,0,0,0.25);
+.form-floating-custom label {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    color: var(--text-dim);
+    font-size: 15px;
+    pointer-events: none;
+    transition: all 0.2s;
 }
 
-/*.auth-form .remember-me {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-*/
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.9rem !important;
-    color: #999 !important;
+.input-modern:focus, .input-modern:not(:placeholder-shown) {
+    border-color: var(--accent-blue);
+    background: var(--input-bg);
 }
 
-.checkbox-input {
-    margin-right: 0.75rem !important;
-    width: 18px;
-    height: 18px;
-    accent-color: #ff0000;
-    cursor: pointer;
-}
-
-.btn-primary.auth-submit {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 1.1rem;
-    font-size: 1.15rem;
+.input-modern:focus + label, .input-modern:not(:placeholder-shown) + label {
+    top: 6px;
+    font-size: 11px;
+    color: var(--accent-blue);
     font-weight: 600;
-    border-radius: 0.85rem;
-    background: #ff0000;
-    border: none;
-    color: #fff;
+}
+
+.error-text {
+    color: #ff4e4e;
+    font-size: 11px;
+    margin-top: 4px;
+    padding-left: 4px;
+}
+
+/* Custom Checkbox */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 28px;
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(255,0,0,0.3);
+    user-select: none;
 }
 
-.btn-primary.auth-submit:hover {
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 18px;
+    width: 18px;
+    background-color: var(--input-bg);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    border-color: var(--accent-red);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--accent-red);
+    border-color: var(--accent-red);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.label-text {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.forgot-link {
+    font-size: 13px;
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+/* Buttons */
+.btn-auth-primary {
+    width: 100%;
+    background: var(--accent-red);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-auth-primary:hover {
     background: #cc0000;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255,0,0,0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px -4px rgba(255, 0, 0, 0.3);
 }
 
-.auth-footer {
+.btn-auth-primary:active {
+    transform: translateY(0);
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
     text-align: center;
-    margin-top: 2rem;
-    color: #999;
+    margin: 24px 0;
+    color: rgba(255, 255, 255, 0.1);
 }
 
-.auth-footer a {
-    color: #ff0000;
+.auth-divider::before, .auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-divider span {
+    padding: 0 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+}
+
+.auth-footer-text {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-dim);
+}
+
+.auth-footer-text a {
+    color: var(--accent-blue);
     text-decoration: none;
     font-weight: 600;
+    margin-left: 4px;
 }
 
-.auth-footer a:hover {
-    text-decoration: underline;
+/* Alert Box */
+.auth-alert {
+    background: rgba(255, 78, 78, 0.1);
+    border: 1px solid rgba(255, 78, 78, 0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #ff4e4e;
 }
 
-.text-danger {
-    color: #ff4444;
-    font-size: 0.9rem;
-    margin-top: 0.4rem;
-    display: block;
+.auth-alert .material-symbols-outlined {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.auth-alert ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
 }
 </style>
