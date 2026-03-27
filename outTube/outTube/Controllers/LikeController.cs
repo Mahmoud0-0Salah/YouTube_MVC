@@ -27,7 +27,7 @@ namespace ourTube.Controllers
 		public async Task<IActionResult> LikeToggle(string videoId)
 		{
 			string userId = _userManager.GetUserId(User);
-			LikeVideo Like = _likeRepo.GetByCondition(l => l.UserId == userId).SingleOrDefault();
+			LikeVideo? Like = _likeRepo.GetByCondition(l => l.UserId == userId && l.VideoId ==videoId).SingleOrDefault();
 			if ((Like == null))
 				_likeRepo.Create(new LikeVideo { UserId = userId, VideoId = videoId, CreatedAt = DateTime.Now });
 			else
