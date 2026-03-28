@@ -147,5 +147,20 @@ namespace OurTube.Controllers
 
             return BadRequest(new { message = "Failed to submit report. Please try again." });
         }
-    }
+
+
+		[Authorize]
+		public IActionResult YourHistory(int page = 1)
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var model = watchVideoRepo.GetWatchedVideosInfo(userId, page);
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+			{
+				return PartialView("_VideoCards", model);
+			}
+
+			return View(model);
+		}
+	}
 }
