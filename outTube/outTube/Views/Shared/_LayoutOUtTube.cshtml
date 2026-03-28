@@ -347,7 +347,7 @@
                     <a href="#" class="sb-link">
                         <span class="material-symbols-outlined">history</span>History
                     </a>
-                    <a href="#" class="sb-link">
+                    <a asp-controller="Video" asp-action="YourVideos" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "YourVideos" ? "active" : "")">
                         <span class="material-symbols-outlined">smart_display</span>Your videos
                     </a>
                     <a asp-controller="Like" asp-action="GetLikedVideos"  class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "GetLikedVideos" ? "active" : "")">

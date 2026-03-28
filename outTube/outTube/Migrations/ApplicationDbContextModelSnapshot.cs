@@ -171,7 +171,7 @@ namespace ourTube.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.BannedUser", b =>
@@ -206,7 +206,7 @@ namespace ourTube.Migrations
                     b.HasIndex("UserId", "AdminId")
                         .IsUnique();
 
-                    b.ToTable("BannedUsers");
+                    b.ToTable("BannedUsers", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.LikeVideo", b =>
@@ -237,7 +237,7 @@ namespace ourTube.Migrations
                     b.HasIndex("VideoId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("LikeVideos");
+                    b.ToTable("LikeVideos", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.ReviewReport", b =>
@@ -258,7 +258,7 @@ namespace ourTube.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("ReviewReports");
+                    b.ToTable("ReviewReports", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.UserCreateComment", b =>
@@ -286,7 +286,7 @@ namespace ourTube.Migrations
 
                     b.HasIndex("VideoId");
 
-                    b.ToTable("UserCreateComments");
+                    b.ToTable("UserCreateComments", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.UserCreateReport", b =>
@@ -314,7 +314,7 @@ namespace ourTube.Migrations
 
                     b.HasIndex("VideoId");
 
-                    b.ToTable("UserCreateReports");
+                    b.ToTable("UserCreateReports", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.UserSubscriber", b =>
@@ -345,7 +345,7 @@ namespace ourTube.Migrations
                     b.HasIndex("UserId", "SubscriberId")
                         .IsUnique();
 
-                    b.ToTable("UserSubscribers");
+                    b.ToTable("UserSubscribers", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.JunctionTables.WatchVideo", b =>
@@ -375,7 +375,7 @@ namespace ourTube.Migrations
 
                     b.HasIndex("VideoId", "UserId");
 
-                    b.ToTable("WatchVideos");
+                    b.ToTable("WatchVideos", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.Report", b =>
@@ -398,7 +398,7 @@ namespace ourTube.Migrations
 
                     b.HasKey("ReportId");
 
-                    b.ToTable("Reports");
+                    b.ToTable("Reports", (string)null);
                 });
 
             modelBuilder.Entity("outTube.Models.User", b =>
@@ -531,7 +531,7 @@ namespace ourTube.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Videos");
+                    b.ToTable("Videos", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

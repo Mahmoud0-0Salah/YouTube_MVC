@@ -92,16 +92,34 @@ namespace OurTube.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
+        public IActionResult YourVideos(int page = 1)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = videoRepository.GetYourVideosInfo(userId, page);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_YourVideoCards", model);
+            }
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpDelete]
         public IActionResult Delete(string id)
         {
-            Video video = videoRepository.GetByCondition(v => v.VideoId == id).FirstOrDefault();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Video video = videoRepository.GetByCondition(v => v.VideoId == id && v.UserId == userId).FirstOrDefault();
             if (video == null)
             {
                 return NotFound();
             }
             videoRepository.Delete(video);
             videoRepository.Save();
-            return RedirectToAction("Index", "Home");
+
+            return Ok();
         }
 
         [Authorize]

@@ -1,0 +1,223 @@
+@using ourTube.ViewModels
+@using ourTube.ViewModels.Video
+@model PaginatedList<VideoGetViewModel>
+@{
+    ViewData["Title"] = "Your Videos";
+}
+
+<style>
+    /* Categories Filter */
+    .categories {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        position: sticky;
+        top: 56px;
+        background-color: var(--bg-color);
+        z-index: 90;
+        overflow-x: auto;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .category-chip {
+        background-color: var(--chip-bg);
+        color: var(--text-color);
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.2s;
+    }
+    .category-chip:hover { background-color: var(--chip-hover); }
+    .category-chip.active { background-color: var(--text-color); color: var(--bg-color); }
+
+    /* Video Grid */
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        row-gap: 40px;
+        margin-top: 24px;
+    }
+
+    /* Video Card */
+    .video-card {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        background: transparent;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+    }
+
+    .thumbnail-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: var(--border-color); /* placeholder color */
+    }
+    .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.2s ease-in-out;
+    }
+    .video-card:hover .thumbnail {
+        transform: scale(1.02);
+        border-radius: 0;
+    }
+    
+    .duration {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
+        padding: 3px 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .video-info {
+        display: flex;
+        margin-top: 12px;
+        gap: 12px;
+        position: relative;
+    }
+    .channel-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-top: 2px;
+    }
+    .video-details {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .video-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+    .channel-name {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 2px;
+        text-decoration: none;
+    }
+    .channel-name:hover {
+        color: var(--text-color);
+    }
+    .video-meta {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    /* Loading Spinner */
+    #loading {
+        text-align: center;
+        padding: 20px;
+        display: none;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 500px) {
+        .video-grid { grid-template-columns: 1fr; }
+        .thumbnail-container { border-radius: 0; }
+    }
+</style>
+
+<div class="video-grid" id="video-grid">
+    <partial name="_YourVideoCards" model="Model" />
+</div>
+
+<div id="loading">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let page = 1;
+        let loading = false;
+        let hasMore = @(Model.HasNextPage.ToString().ToLower());
+
+        window.onscroll = function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                if (!loading && hasMore) {
+                    loadMoreVideos();
+                }
+            }
+        };
+
+        function loadMoreVideos() {
+            loading = true;
+            document.getElementById("loading").style.display = "block";
+            page++;
+
+            fetch(`/@(ViewContext.RouteData.Values["controller"]?.ToString())/@(ViewContext.RouteData.Values["action"]?.ToString())?page=${page}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                if (html.trim() === "") {
+                    hasMore = false;
+                } else {
+                    document.getElementById("video-grid").innerHTML += html;
+                    loading = false;
+                }
+                document.getElementById("loading").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error loading more videos:", error);
+                loading = false;
+                document.getElementById("loading").style.display = "none";
+            });
+        }
+        
+        function deleteVideo(videoId) {
+            if (!confirm('Are you sure you want to delete this video?')) return;
+            
+            fetch(`/Video/Delete/${videoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if(response.ok) {
+                    const card = document.getElementById(`video-card-${videoId}`);
+                    if (card) {
+                        card.remove();
+                    }
+                } else {
+                    alert('Failed to delete video.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting video:', error);
+                alert('Error deleting video.');
+            });
+        }
+    </script>
+}
