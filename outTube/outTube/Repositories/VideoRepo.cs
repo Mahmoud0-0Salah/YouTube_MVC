@@ -78,7 +78,21 @@ namespace ourTube.Repositories
 			return new PaginatedList<VideoGetViewModel>(items, GetByCondition(v => v.Visible).Count(), page, pageSize);
 		}
 
-        public VideoDetailsViewModel GetVideoDetails(string videoId, string userId)
+		public PaginatedList<VideoGetViewModel> GetYourVideosInfo(string userId, int page = 1, int pageSize = 8)
+		{
+			List<VideoGetViewModel> items = GetByCondition(v => v.UserId == userId)
+			   .Include(v => v.User)
+			   .Include(v => v.Views)
+			   .OrderByDescending(v => v.CreatedAt)
+			   .Select(v => GetVideoGetViewModel(v))
+			   .Skip((page - 1) * pageSize)
+			   .Take(pageSize)
+			   .ToList();
+
+			return new PaginatedList<VideoGetViewModel>(items, GetByCondition(v => v.UserId == userId).Count(), page, pageSize);
+		}
+
+		public VideoDetailsViewModel GetVideoDetails(string videoId, string userId)
         {
             Video video = GetByCondition(v => v.VideoId == videoId)
 				.Include(v => v.User)
