@@ -14,5 +14,7 @@ namespace ourTube.Repositories.Interfaces
 		VideoDetailsViewModel GetVideoDetails(string videoId, string userId);
 
 		bool CreateReport(ReportCreateViewModel model, string userId);
+		PaginatedList<VideoGetViewModel> SearchVideos(string query, int page = 1, int pageSize = 8);
+		List<ChannelSearchViewModel> SearchChannels(string query, int take = 5);
     }
 }
