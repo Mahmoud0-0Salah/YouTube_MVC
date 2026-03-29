@@ -1,0 +1,29 @@
+@model ourTube.ViewModels.ChannelSearchViewModel
+
+<div class="col-12 mb-4 d-flex align-items-center py-3 border-bottom border-secondary border-opacity-25">
+    <div class="flex-shrink-0 me-4 ms-md-5">
+        <a asp-controller="Channel" asp-action="Index" asp-route-id="@Model.UserId">
+            @{
+                var chDefaultImg = "https://ui-avatars.com/api/?name=" + Model.ChannelName.Replace(" ", "+") + "&background=random&size=136";
+                var chImg = string.IsNullOrWhiteSpace(Model.ImageUrl) ? chDefaultImg : Model.ImageUrl;
+            }
+            <img src="@chImg" 
+                 class="rounded-circle" 
+                 style="width: 136px; height: 136px; object-fit: cover;" 
+                 alt="@Model.ChannelName"
+                 onerror="this.src='@chDefaultImg'">
+        </a>
+    </div>
+    <div class="flex-grow-1">
+        <h4 class="mb-1 fw-normal">@Model.ChannelName</h4>
+        <div class="text-secondary small">
+            <span>@@@Model.ChannelName.Replace(" ", "").ToLower()</span> • <span>@Model.SubscriberCount Subscribers</span> • <span>@Model.VideoCount videos</span>
+        </div>
+        <div class="mt-2 text-secondary small text-truncate d-none d-sm-block" style="max-width: 600px;">
+            Welcome to the @Model.ChannelName channel! Explore our content and subscribe for more updates.
+        </div>
+    </div>
+    <div class="ms-auto pe-md-5 d-none d-md-block">
+        <a asp-controller="Channel" asp-action="Index" asp-route-id="@Model.UserId" class="btn btn-light rounded-pill px-4 fw-bold">Visit Channel</a>
+    </div>
+</div>
