@@ -53,6 +53,32 @@ namespace outTube.Controllers
 			return View("VideosGrid", model);
 		}
 
+
+		public IActionResult Search(string query, int page = 1)
+		{
+			if (string.IsNullOrWhiteSpace(query))
+			{
+				return RedirectToAction("Index");
+			}
+
+			var videos = _videoRepo.SearchVideos(query, page);
+			var channels = page == 1 ? _videoRepo.SearchChannels(query) : new List<ChannelSearchViewModel>();
+
+			var model = new SearchViewModel
+			{
+				Query = query,
+				Videos = videos,
+				Channels = channels
+			};
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+			{
+				return PartialView("_VideoCards", videos);
+			}
+
+			return View(model);
+		}
+
 		public IActionResult Privacy()
         {
             return View();
