@@ -270,8 +270,8 @@
         </div>
 
         <div class="nav-center">
-            <form class="search-form" action="/" method="GET" onsubmit="event.preventDefault();">
-                <input type="text" class="search-input" placeholder="Search" aria-label="Search" />
+            <form class="search-form" asp-controller="Home" asp-action="Search" method="GET">
+                <input type="text" name="query" class="search-input" placeholder="Search" aria-label="Search" />
                 <button type="submit" class="search-btn" title="Search">
                     <span class="material-symbols-outlined">search</span>
                 </button>
