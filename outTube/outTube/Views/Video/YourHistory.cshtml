@@ -1,0 +1,229 @@
+﻿@using ourTube.ViewModels
+@using ourTube.ViewModels.Video
+@model PaginatedList<VideoGetViewModel>
+@{
+    ViewData["Title"] = "Watch History";
+}
+
+<style>
+    .history-header {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 24px auto;
+        max-width: 850px;
+    }
+
+    /* Video List Layout */
+    .video-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 16px;
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .video-card {
+        display: flex;
+        flex-direction: row;
+        cursor: pointer;
+        background: transparent;
+        text-decoration: none;
+        color: inherit;
+        position: relative;
+    }
+
+    .video-card > a {
+        flex-shrink: 0;
+    }
+
+    .thumbnail-container {
+        width: 246px; /* fixed width for desktop */
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        background-color: var(--border-color); /* placeholder color */
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .video-card:hover .thumbnail {
+        transform: scale(1.02);
+    }
+
+    .duration {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        background-color: rgba(0,0,0,0.8);
+        color: #fff;
+        padding: 3px 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .video-info {
+        display: flex;
+        flex-direction: row;
+        margin-top: 0;
+        margin-left: 16px;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .channel-avatar {
+        display: none; /* Hide on history list to match typical layout */
+    }
+
+    .video-details {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .video-title {
+        font-size: 18px;
+        font-weight: 400;
+        color: var(--text-color);
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+
+    .channel-name {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 2px;
+        text-decoration: none;
+    }
+
+    .channel-name:hover {
+        color: var(--text-color);
+    }
+
+    .video-meta {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    /* Loading Spinner */
+    #loading {
+        text-align: center;
+        padding: 20px;
+        display: none;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 600px) {
+        .history-header {
+            margin-left: 16px;
+        }
+        .video-grid { 
+            grid-template-columns: 1fr;
+            display: grid; 
+            margin-left: 16px; 
+            margin-right: 16px;
+        }
+        .video-card {
+            flex-direction: column;
+            width: 100%;
+        }
+        .video-card > a {
+            width: 100%;
+        }
+        .thumbnail-container { 
+            width: 100%; 
+            border-radius: 0; 
+        }
+        .video-info {
+            margin-left: 0;
+            margin-top: 12px;
+        }
+        .channel-avatar {
+            display: block;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-top: 2px;
+        }
+        .video-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+    }
+</style>
+
+<h2 class="history-header">Watch history</h2>
+
+<div class="video-grid" id="video-grid">
+    @if(Model.Any())
+    {
+        <partial name="_VideoCards" model="Model" />
+    }
+    else
+    {
+        <p style="text-align:center; color: var(--text-secondary); padding: 40px;">No watch history yet. Start watching videos!</p>
+    }
+</div>
+
+<div id="loading">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let page = 1;
+        let loading = false;
+        let hasMore = @(Model.HasNextPage.ToString().ToLower());
+
+        window.onscroll = function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                if (!loading && hasMore) {
+                    loadMoreVideos();
+                }
+            }
+        };
+
+        function loadMoreVideos() {
+            loading = true;
+            document.getElementById("loading").style.display = "block";
+            page++;
+
+            fetch(`/@(ViewContext.RouteData.Values["controller"]?.ToString())/@(ViewContext.RouteData.Values["action"]?.ToString())?page=${page}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                if (html.trim() === "") {
+                    hasMore = false;
+                } else {
+                    document.getElementById("video-grid").innerHTML += html;
+                    loading = false;
+                }
+                document.getElementById("loading").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error loading more videos:", error);
+                loading = false;
+                document.getElementById("loading").style.display = "none";
+            });
+        }
+    </script>
+}

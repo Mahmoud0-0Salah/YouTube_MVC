@@ -337,14 +337,14 @@
             @if (User.Identity.IsAuthenticated)
             {
                 <div class="sidebar-section">
-                    <a asp-controller="Subscription" asp-action="GetSubscripedVideos"  class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "GetLikedVideos" ? "active" : "")">
+                    <a asp-controller="Subscription" asp-action="GetSubscripedVideos"  class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "GetSubscripedVideos" ? "active" : "")">
                         <span class="material-symbols-outlined">subscriptions</span>Subscriptions
                     </a>
                 </div>
                 
                 <div class="sidebar-section">
                     <h3 class="sidebar-title">You</h3>
-                    <a href="#" class="sb-link">
+                    <a  asp-controller="Video" asp-action="YourHistory" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "YourHistory" ? "active" : "")">
                         <span class="material-symbols-outlined">history</span>History
                     </a>
                     <a asp-controller="Video" asp-action="YourVideos" class="sb-link @(ViewContext.RouteData.Values["action"]?.ToString() == "YourVideos" ? "active" : "")">
