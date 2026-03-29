@@ -39,6 +39,11 @@ namespace OurTube.Controllers
 
         public async Task<IActionResult> Details(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest();
+            }
+
             var user = await userManager.GetUserAsync(User);
             VideoDetailsViewModel video = videoRepository.GetVideoDetails(id, user?.Id);
             if (video == null)
@@ -49,14 +54,22 @@ namespace OurTube.Controllers
         }
 
 
+        [Authorize]
         public IActionResult Create()
         {
             return View(new VideoCreateViewModel());
         }
+
+        [Authorize]
         [HttpPost]
         [RequestSizeLimit(500_000_000)]
         public async Task<IActionResult> Create(VideoCreateViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             Video video = new Video();
             video.VideoId = Guid.NewGuid().ToString();
             video.CreatedAt = DateTime.Now;
@@ -95,6 +108,11 @@ namespace OurTube.Controllers
         [Authorize]
         public IActionResult YourVideos(int page = 1)
         {
+            if (page < 1)
+            {
+                return BadRequest();
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var model = videoRepository.GetYourVideosInfo(userId, page);
 
