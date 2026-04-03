@@ -1,0 +1,403 @@
+@model ourTube.ViewModels.ChannelPageViewModel
+@{
+    ViewData["Title"] = Model.ChannelName + " - OurTube";
+    Layout = "_LayoutOUtTube";
+}
+
+<style>
+    /* ====== CHANNEL BANNER ====== */
+    .channel-banner {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        border-radius: 16px;
+        margin-bottom: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .channel-banner::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: linear-gradient(transparent, var(--bg-color));
+    }
+
+    /* ====== CHANNEL INFO SECTION ====== */
+    .channel-info-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 20px 0 24px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .channel-avatar-large {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        margin-top: -40px;
+        border: 4px solid var(--bg-color);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        z-index: 2;
+    }
+
+    .channel-meta {
+        flex: 1;
+        padding-top: 8px;
+    }
+
+    .channel-meta h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 4px;
+    }
+
+    .channel-meta-stats {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .channel-meta-stats span::after {
+        content: '•';
+        margin-left: 8px;
+    }
+    .channel-meta-stats span:last-child::after {
+        content: '';
+    }
+
+    .channel-description {
+        color: var(--text-secondary);
+        font-size: 14px;
+        max-width: 600px;
+    }
+
+    .channel-actions {
+        flex-shrink: 0;
+        padding-top: 12px;
+    }
+
+    .subscribe-btn {
+        background: #fff;
+        color: #0f0f0f;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 24px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .subscribe-btn:hover {
+        background: #d9d9d9;
+    }
+    .subscribe-btn.subscribed {
+        background: var(--hover-bg);
+        color: var(--text-color);
+    }
+    .subscribe-btn.subscribed:hover {
+        background: var(--chip-hover);
+    }
+
+    .edit-profile-btn {
+        background: var(--hover-bg);
+        color: var(--text-color);
+        border: none;
+        border-radius: 20px;
+        padding: 10px 24px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .edit-profile-btn:hover {
+        background: var(--chip-hover);
+        color: var(--text-color);
+    }
+
+    /* ====== CHANNEL TABS ====== */
+    .channel-tabs {
+        display: flex;
+        gap: 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 24px;
+    }
+    .channel-tab {
+        padding: 16px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        text-decoration: none;
+        background: none;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+    .channel-tab:hover {
+        color: var(--text-color);
+    }
+    .channel-tab.active {
+        color: var(--text-color);
+        font-weight: 600;
+        border-bottom-color: var(--text-color);
+    }
+
+    /* ====== VIDEO GRID (same as home) ====== */
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        row-gap: 40px;
+        margin-top: 24px;
+    }
+
+    .video-card {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        background: transparent;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .thumbnail-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: var(--border-color);
+    }
+    .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.2s ease-in-out;
+    }
+    .video-card:hover .thumbnail {
+        transform: scale(1.02);
+        border-radius: 0;
+    }
+    
+    .duration {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
+        padding: 3px 4px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .video-info {
+        display: flex;
+        margin-top: 12px;
+        gap: 12px;
+    }
+    .channel-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-top: 2px;
+    }
+    .video-details {
+        display: flex;
+        flex-direction: column;
+    }
+    .video-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+    .channel-name {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 2px;
+        text-decoration: none;
+    }
+    .channel-name:hover {
+        color: var(--text-color);
+    }
+    .video-meta {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: var(--text-secondary);
+    }
+    .empty-state .material-symbols-outlined {
+        font-size: 64px;
+        margin-bottom: 16px;
+        opacity: 0.4;
+    }
+
+    #loading {
+        text-align: center;
+        padding: 20px;
+        display: none;
+    }
+
+    @@media (max-width: 768px) {
+        .channel-info-section {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .channel-avatar-large {
+            margin-top: -50px;
+        }
+        .channel-meta-stats {
+            justify-content: center;
+        }
+        .channel-actions {
+            width: 100%;
+            text-align: center;
+        }
+        .video-grid { grid-template-columns: 1fr; }
+        .thumbnail-container { border-radius: 0; }
+    }
+</style>
+
+@{
+    var defaultImg = "https://ui-avatars.com/api/?name=" + Model.ChannelName.Replace(" ", "+") + "&background=random&size=128";
+    var avatarImg = string.IsNullOrWhiteSpace(Model.ImageUrl) ? defaultImg : Model.ImageUrl;
+}
+
+<!-- Channel Banner -->
+<div class="channel-banner"></div>
+
+<!-- Channel Info -->
+<div class="channel-info-section">
+    <img src="@avatarImg" 
+         alt="@Model.ChannelName" 
+         class="channel-avatar-large"
+         onerror="this.src='@defaultImg'" />
+
+    <div class="channel-meta">
+        <h1>@Model.ChannelName</h1>
+        <div class="channel-meta-stats">
+            <span>@Model.Handle</span>
+            <span>@Model.SubscriberCount subscribers</span>
+            <span>@Model.VideoCount videos</span>
+        </div>
+        <div class="channel-description">
+            Joined @Model.JoinedDate.ToString("MMMM yyyy")
+        </div>
+    </div>
+
+    <div class="channel-actions">
+        @if (Model.IsOwnChannel)
+        {
+            <a asp-controller="Profile" asp-action="Index" class="edit-profile-btn">
+                Edit Profile
+            </a>
+        }
+        else if (User.Identity.IsAuthenticated)
+        {
+            @if (Model.IsSubscribed)
+            {
+                <button class="subscribe-btn subscribed">Subscribed</button>
+            }
+            else
+            {
+                <button class="subscribe-btn">Subscribe</button>
+            }
+        }
+    </div>
+</div>
+
+<!-- Channel Tabs -->
+<div class="channel-tabs">
+    <button class="channel-tab active">Videos</button>
+</div>
+
+<!-- Videos Grid -->
+@if (Model.Videos != null && Model.Videos.Any())
+{
+    <div class="video-grid" id="video-grid">
+        <partial name="_VideoCards" model="Model.Videos" />
+    </div>
+
+    <div id="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <span class="material-symbols-outlined">videocam_off</span>
+        <h3>No videos yet</h3>
+        <p>This channel hasn't uploaded any videos.</p>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        let page = 1;
+        let loading = false;
+        let hasMore = @(Model.Videos != null && Model.Videos.HasNextPage ? "true" : "false");
+
+        window.onscroll = function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                if (!loading && hasMore) {
+                    loadMoreVideos();
+                }
+            }
+        };
+
+        function loadMoreVideos() {
+            loading = true;
+            document.getElementById("loading").style.display = "block";
+            page++;
+
+            fetch(`/Channel/Index/@Model.UserId?page=${page}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                if (html.trim() === "") {
+                    hasMore = false;
+                } else {
+                    document.getElementById("video-grid").innerHTML += html;
+                    loading = false;
+                }
+                document.getElementById("loading").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Error loading more videos:", error);
+                loading = false;
+                document.getElementById("loading").style.display = "none";
+            });
+        }
+    </script>
+}

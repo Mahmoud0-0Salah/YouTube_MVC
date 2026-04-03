@@ -27,8 +27,8 @@ namespace ourTube.Repositories
 			{
 				Id = video.VideoId,
 				Title = video.Title,
-        Channel = video.User.FirstName + " " + video.User.LastName,
-        Description = video.Description ?? string.Empty,
+				Channel = video.User.FirstName + " " + video.User.LastName,
+				Description = video.Description ?? string.Empty,
 				Duration = video.Duration.ToString(@"hh\:mm\:ss"),
 				Time = video.CreatedAt.ToString("MMM dd, yyyy"),
 				Thumb = video.ThumbnailUrl,
@@ -170,5 +170,60 @@ namespace ourTube.Repositories
 
 			return true;
 		}
-    }
+
+		public PaginatedList<VideoGetViewModel> SearchVideos(string query, int page = 1, int pageSize = 8)
+		{
+			if (string.IsNullOrWhiteSpace(query))
+				return new PaginatedList<VideoGetViewModel>(new List<VideoGetViewModel>(), 0, page, pageSize);
+
+			query = query.ToLower();
+
+			var queryable = GetByCondition(v => v.Visible && (v.Title.ToLower().Contains(query) || (v.Description != null && v.Description.ToLower().Contains(query))));
+
+			List<VideoGetViewModel> items = queryable
+			   .Include(v => v.User)
+			   .Include(v => v.Views)
+			   .Select(v => new VideoGetViewModel
+			   {
+				   Id = v.VideoId,
+				   Title = v.Title,
+				   Channel = v.User.FirstName + " " + v.User.LastName,
+				   Description = v.Description ?? string.Empty,
+				   Duration = v.Duration.ToString(@"hh\:mm\:ss"),
+				   Time = v.CreatedAt.ToString("MMM dd, yyyy"),
+				   Thumb = v.ThumbnailUrl,
+				   Avatar = v.User.ImageUrl,
+				   VideoUrl = v.VideoUrl,
+				   Views = v.Views.Count
+			   })
+			   .Skip((page - 1) * pageSize)
+			   .Take(pageSize)
+			   .ToList();
+
+			return new PaginatedList<VideoGetViewModel>(items, queryable.Count(), page, pageSize);
+		}
+
+		public List<ChannelSearchViewModel> SearchChannels(string query, int take = 5)
+		{
+			if (string.IsNullOrWhiteSpace(query))
+				return new List<ChannelSearchViewModel>();
+
+			query = query.ToLower();
+
+			return _context.Users
+				.Where(u => u.FirstName.ToLower().Contains(query) || u.LastName.ToLower().Contains(query))
+				.Include(u => u.Subscribers)
+				.Include(u => u.Videos)
+				.Select(u => new ChannelSearchViewModel
+				{
+					UserId = u.Id,
+					ChannelName = u.FirstName + " " + u.LastName,
+					ImageUrl = u.ImageUrl ?? string.Empty,
+					SubscriberCount = u.Subscribers != null ? u.Subscribers.Count : 0,
+					VideoCount = u.Videos != null ? u.Videos.Count : 0
+				})
+				.Take(take)
+				.ToList();
+		}
+	}
 }
